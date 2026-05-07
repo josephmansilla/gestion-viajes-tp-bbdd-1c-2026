@@ -4,6 +4,6 @@ Integrantes:
 Mansilla, Joseph Thomas - 2154493
 Calio, Tobias - 2207950
 Bursztyn, Alexis - 2206407
-Morris, Tomas  - 
+Morrison, Martin - 2208568
 
-Email Lider: @frba.utn.edu.ar
+Email Lider: martomorri@gmail.com
