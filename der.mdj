@@ -6409,7 +6409,7 @@
 									"font": "Arial;13;0",
 									"parentStyle": false,
 									"left": 513,
-									"top": 1679,
+									"top": 1657,
 									"height": 13,
 									"alpha": 1.5707963267948966,
 									"distance": 15,
@@ -6427,7 +6427,7 @@
 									"font": "Arial;13;0",
 									"parentStyle": false,
 									"left": 1054,
-									"top": 1694,
+									"top": 1672,
 									"height": 13,
 									"alpha": 0.5235987755982988,
 									"distance": 30,
@@ -6463,7 +6463,7 @@
 								"$ref": "AAAAAAGdyCGUnVx296s="
 							},
 							"lineStyle": 2,
-							"points": "1080:1686;528:1686;528:1379",
+							"points": "1080:1664;528:1664;528:1379",
 							"nameLabel": {
 								"$ref": "AAAAAAGdzK7iqxmZgvA="
 							},
@@ -8916,6 +8916,91 @@
 							},
 							"headNameLabel": {
 								"$ref": "AAAAAAGeA4vumP03xMo="
+							}
+						},
+						{
+							"_type": "ERDRelationshipView",
+							"_id": "AAAAAAGeA79k5rc9HPc=",
+							"_parent": {
+								"$ref": "AAAAAAGdwHUmm7z5ukU="
+							},
+							"model": {
+								"$ref": "AAAAAAGeA79k5rc5BHE="
+							},
+							"subViews": [
+								{
+									"_type": "EdgeLabelView",
+									"_id": "AAAAAAGeA79k5rc+VRg=",
+									"_parent": {
+										"$ref": "AAAAAAGeA79k5rc9HPc="
+									},
+									"visible": false,
+									"font": "Arial;13;0",
+									"parentStyle": false,
+									"left": 137,
+									"top": 1689,
+									"height": 13,
+									"alpha": 1.5707963267948966,
+									"distance": 15,
+									"hostEdge": {
+										"$ref": "AAAAAAGeA79k5rc9HPc="
+									},
+									"edgePosition": 1
+								},
+								{
+									"_type": "EdgeLabelView",
+									"_id": "AAAAAAGeA79k5rc/9vA=",
+									"_parent": {
+										"$ref": "AAAAAAGeA79k5rc9HPc="
+									},
+									"font": "Arial;13;0",
+									"parentStyle": false,
+									"left": 1054,
+									"top": 1704,
+									"height": 13,
+									"alpha": 0.5235987755982988,
+									"distance": 30,
+									"hostEdge": {
+										"$ref": "AAAAAAGeA79k5rc9HPc="
+									},
+									"edgePosition": 2
+								},
+								{
+									"_type": "EdgeLabelView",
+									"_id": "AAAAAAGeA79k5rdAfzo=",
+									"_parent": {
+										"$ref": "AAAAAAGeA79k5rc9HPc="
+									},
+									"font": "Arial;13;0",
+									"parentStyle": false,
+									"left": 137,
+									"top": 759,
+									"height": 13,
+									"alpha": -0.5235987755982988,
+									"distance": 30,
+									"hostEdge": {
+										"$ref": "AAAAAAGeA79k5rc9HPc="
+									}
+								}
+							],
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"head": {
+								"$ref": "AAAAAAGdyB8zr1xCyvI="
+							},
+							"tail": {
+								"$ref": "AAAAAAGdyCGUnVx296s="
+							},
+							"lineStyle": 2,
+							"points": "1080:1696;152:1696;152:740",
+							"nameLabel": {
+								"$ref": "AAAAAAGeA79k5rc+VRg="
+							},
+							"tailNameLabel": {
+								"$ref": "AAAAAAGeA79k5rc/9vA="
+							},
+							"headNameLabel": {
+								"$ref": "AAAAAAGeA79k5rdAfzo="
 							}
 						}
 					]
@@ -13021,7 +13106,8 @@
 							},
 							"name": "codigo_pais",
 							"type": "BIGINT",
-							"length": 0
+							"length": 0,
+							"foreignKey": true
 						},
 						{
 							"_type": "ERDColumn",
@@ -13179,6 +13265,34 @@
 								},
 								"reference": {
 									"$ref": "AAAAAAGdwiszRpgalq4="
+								},
+								"cardinality": "0..*"
+							}
+						},
+						{
+							"_type": "ERDRelationship",
+							"_id": "AAAAAAGeA79k5rc5BHE=",
+							"_parent": {
+								"$ref": "AAAAAAGdyCGUnVx0yT8="
+							},
+							"end1": {
+								"_type": "ERDRelationshipEnd",
+								"_id": "AAAAAAGeA79k5rc6s/0=",
+								"_parent": {
+									"$ref": "AAAAAAGeA79k5rc5BHE="
+								},
+								"reference": {
+									"$ref": "AAAAAAGdyCGUnVx0yT8="
+								}
+							},
+							"end2": {
+								"_type": "ERDRelationshipEnd",
+								"_id": "AAAAAAGeA79k5rc7nNw=",
+								"_parent": {
+									"$ref": "AAAAAAGeA79k5rc5BHE="
+								},
+								"reference": {
+									"$ref": "AAAAAAGdyB8zr1xAcgM="
 								},
 								"cardinality": "0..*"
 							}
