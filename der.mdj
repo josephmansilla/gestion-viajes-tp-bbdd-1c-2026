@@ -27,9 +27,7 @@
 							},
 							"font": "Arial;13;0",
 							"parentStyle": false,
-							"left": 16,
-							"top": 8,
-							"width": 2624,
+							"width": 2664,
 							"height": 1736
 						},
 						{
@@ -3265,7 +3263,7 @@
 									"parentStyle": true,
 									"left": 1112,
 									"top": 117,
-									"width": 315.314453125,
+									"width": 318.6787109375,
 									"height": 13,
 									"text": "propuestas"
 								},
@@ -3292,7 +3290,7 @@
 											"parentStyle": true,
 											"left": 1117,
 											"top": 140,
-											"width": 305.314453125,
+											"width": 308.6787109375,
 											"height": 13
 										},
 										{
@@ -3308,7 +3306,7 @@
 											"parentStyle": true,
 											"left": 1117,
 											"top": 155,
-											"width": 305.314453125,
+											"width": 308.6787109375,
 											"height": 13
 										},
 										{
@@ -3324,7 +3322,7 @@
 											"parentStyle": true,
 											"left": 1117,
 											"top": 170,
-											"width": 305.314453125,
+											"width": 308.6787109375,
 											"height": 13
 										},
 										{
@@ -3340,7 +3338,7 @@
 											"parentStyle": true,
 											"left": 1117,
 											"top": 185,
-											"width": 305.314453125,
+											"width": 308.6787109375,
 											"height": 13
 										},
 										{
@@ -3356,7 +3354,7 @@
 											"parentStyle": true,
 											"left": 1117,
 											"top": 200,
-											"width": 305.314453125,
+											"width": 308.6787109375,
 											"height": 13
 										},
 										{
@@ -3372,7 +3370,7 @@
 											"parentStyle": true,
 											"left": 1117,
 											"top": 215,
-											"width": 305.314453125,
+											"width": 308.6787109375,
 											"height": 13
 										},
 										{
@@ -3388,7 +3386,7 @@
 											"parentStyle": true,
 											"left": 1117,
 											"top": 230,
-											"width": 305.314453125,
+											"width": 308.6787109375,
 											"height": 13
 										},
 										{
@@ -3404,7 +3402,7 @@
 											"parentStyle": true,
 											"left": 1117,
 											"top": 245,
-											"width": 305.314453125,
+											"width": 308.6787109375,
 											"height": 13
 										},
 										{
@@ -3420,7 +3418,7 @@
 											"parentStyle": true,
 											"left": 1117,
 											"top": 260,
-											"width": 305.314453125,
+											"width": 308.6787109375,
 											"height": 13
 										},
 										{
@@ -3436,7 +3434,7 @@
 											"parentStyle": true,
 											"left": 1117,
 											"top": 275,
-											"width": 305.314453125,
+											"width": 308.6787109375,
 											"height": 13
 										},
 										{
@@ -3452,7 +3450,7 @@
 											"parentStyle": true,
 											"left": 1117,
 											"top": 290,
-											"width": 305.314453125,
+											"width": 308.6787109375,
 											"height": 13
 										},
 										{
@@ -3468,7 +3466,7 @@
 											"parentStyle": true,
 											"left": 1117,
 											"top": 305,
-											"width": 305.314453125,
+											"width": 308.6787109375,
 											"height": 13
 										},
 										{
@@ -3485,7 +3483,7 @@
 											"parentStyle": true,
 											"left": 1613,
 											"top": -343,
-											"width": 305.314453125,
+											"width": 308.6787109375,
 											"height": 13
 										},
 										{
@@ -3502,7 +3500,7 @@
 											"parentStyle": true,
 											"left": 1101,
 											"top": 304,
-											"width": 305.314453125,
+											"width": 308.6787109375,
 											"height": 13
 										}
 									],
@@ -3510,7 +3508,7 @@
 									"parentStyle": true,
 									"left": 1112,
 									"top": 135,
-									"width": 315.314453125,
+									"width": 318.6787109375,
 									"height": 188
 								}
 							],
@@ -3518,7 +3516,7 @@
 							"parentStyle": false,
 							"left": 1112,
 							"top": 112,
-							"width": 315.314453125,
+							"width": 318.6787109375,
 							"height": 211,
 							"nameLabel": {
 								"$ref": "AAAAAAGdwj1plpiuED8="
@@ -4560,10 +4558,10 @@
 							"font": "Arial;13;0",
 							"parentStyle": false,
 							"left": 920,
-							"top": 640,
-							"width": 126.208984375,
+							"top": 648,
+							"width": 129.7890625,
 							"height": 98,
-							"text": "medio_pago (check_constraint)\nTarjeta De Debito\nTransferencia\nEfectivo\nTarjeta de Credito"
+							"text": "medio_pago (check_constraint)\nDEBITO\nTRANSFERENCIA\nEFECTIVO\nCREDITO"
 						},
 						{
 							"_type": "ERDEntityView",
@@ -5248,7 +5246,7 @@
 									"visible": false,
 									"font": "Arial;13;0",
 									"parentStyle": false,
-									"left": 1453,
+									"left": 1455,
 									"top": 192,
 									"height": 13,
 									"alpha": 1.5707963267948966,
@@ -5266,7 +5264,7 @@
 									},
 									"font": "Arial;13;0",
 									"parentStyle": false,
-									"left": 1452,
+									"left": 1456,
 									"top": 192,
 									"height": 13,
 									"alpha": 0.5235987755982988,
@@ -5303,7 +5301,7 @@
 								"$ref": "AAAAAAGdwj1plpitTKk="
 							},
 							"lineStyle": 2,
-							"points": "1427:213;1480:213",
+							"points": "1431:213;1480:213",
 							"nameLabel": {
 								"$ref": "AAAAAAGdyBp9lluTus8="
 							},
@@ -8581,7 +8579,7 @@
 									"top": 277,
 									"width": 279.18359375,
 									"height": 13,
-									"text": "propuesta_habitacion"
+									"text": "propuestas_habitacion"
 								},
 								{
 									"_type": "ERDColumnCompartmentView",
@@ -9002,6 +9000,20 @@
 							"headNameLabel": {
 								"$ref": "AAAAAAGeA79k5rdAfzo="
 							}
+						},
+						{
+							"_type": "UMLNoteView",
+							"_id": "AAAAAAGeDU0JxlMahtg=",
+							"_parent": {
+								"$ref": "AAAAAAGdwHUmm7z5ukU="
+							},
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"left": 1304,
+							"top": 328,
+							"width": 144,
+							"height": 111,
+							"text": "estado_propuesta (check constraint) PENDIENTE\nACEPTADO\nRECHAZADO\nMODIFICADO\nPAGO_FALTANTE"
 						}
 					]
 				},
@@ -9224,8 +9236,8 @@
 								"$ref": "AAAAAAGdwHVKk7z92AE="
 							},
 							"name": "canal_venta",
-							"type": "VARCHAR",
-							"length": "10"
+							"type": "NVARCHAR",
+							"length": "50"
 						},
 						{
 							"_type": "ERDColumn",
@@ -9234,8 +9246,8 @@
 								"$ref": "AAAAAAGdwHVKk7z92AE="
 							},
 							"name": "medio_pago",
-							"type": "VARCHAR",
-							"length": "10"
+							"type": "NVARCHAR",
+							"length": "50"
 						},
 						{
 							"_type": "ERDColumn",
@@ -11910,9 +11922,9 @@
 							"_parent": {
 								"$ref": "AAAAAAGdwj1plpirwZ0="
 							},
-							"name": "estado",
-							"type": "BIT",
-							"length": 0
+							"name": "estado_propuesta",
+							"type": "NVARCHAR",
+							"length": "50"
 						},
 						{
 							"_type": "ERDColumn",
@@ -13483,7 +13495,7 @@
 					"_parent": {
 						"$ref": "AAAAAAGdwHUmm7z4DwY="
 					},
-					"name": "propuesta_habitacion",
+					"name": "propuestas_habitacion",
 					"columns": [
 						{
 							"_type": "ERDColumn",
@@ -13516,6 +13528,69 @@
 							"name": "cantidad",
 							"type": "INT",
 							"length": 0
+						}
+					]
+				},
+				{
+					"_type": "ERDEntity",
+					"_id": "AAAAAAGeDUulvFLi+Qw=",
+					"_parent": {
+						"$ref": "AAAAAAGdwHUmm7z4DwY="
+					},
+					"name": "estado_propuesta",
+					"columns": [
+						{
+							"_type": "ERDColumn",
+							"_id": "AAAAAAGeDUxUGFMO4Ec=",
+							"_parent": {
+								"$ref": "AAAAAAGeDUulvFLi+Qw="
+							},
+							"name": "PENDIENTE_PAGO",
+							"length": 0
+						},
+						{
+							"_type": "ERDColumn",
+							"_id": "AAAAAAGeDUv8x1Lxt0M=",
+							"_parent": {
+								"$ref": "AAAAAAGeDUulvFLi+Qw="
+							},
+							"name": "PENDIENTE",
+							"length": 0
+						},
+						{
+							"_type": "ERDColumn",
+							"_id": "AAAAAAGeDUwculL4vME=",
+							"_parent": {
+								"$ref": "AAAAAAGeDUulvFLi+Qw="
+							},
+							"name": "ACEPTADO",
+							"length": 0
+						},
+						{
+							"_type": "ERDColumn",
+							"_id": "AAAAAAGeDUwpQVL/JN8=",
+							"_parent": {
+								"$ref": "AAAAAAGeDUulvFLi+Qw="
+							},
+							"name": "RECHAZADO",
+							"length": 0
+						},
+						{
+							"_type": "ERDColumn",
+							"_id": "AAAAAAGeDUw+kFMG8vE=",
+							"_parent": {
+								"$ref": "AAAAAAGeDUulvFLi+Qw="
+							},
+							"name": "MODIFICADO",
+							"length": 0
+						},
+						{
+							"_type": "ERDColumn",
+							"_id": "AAAAAAGeDU2xPlMnYy0=",
+							"_parent": {
+								"$ref": "AAAAAAGeDUulvFLi+Qw="
+							},
+							"name": "Column2"
 						}
 					]
 				}
