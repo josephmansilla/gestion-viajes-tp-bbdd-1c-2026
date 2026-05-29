@@ -646,28 +646,21 @@ GO
 /* ---- localidades ---- */
 CREATE PROCEDURE DB_GD1C2026.migrar_localidades AS
 BEGIN
-    -- Inserta localidades �nicas a partir de las columnas de localidad de la tabla maestra.
     INSERT INTO DB_GD1C2026.localidades (codigo_localidad, codigo_provincia, nombre)
-    SELECT
-        ROW_NUMBER() OVER (ORDER BY src.localidad, src.provincia) AS codigo_localidad,
-        pr.codigo_provincia,
-        src.localidad                                             AS nombre
+    SELECT ROW_NUMBER() OVER (ORDER BY src.localidad), MIN(pr.codigo_provincia), src.localidad
     FROM (
-        SELECT DISTINCT Agencia_Localidad AS localidad, Agencia_Provincia AS provincia
-        FROM gd_esquema.Maestra
-        WHERE Agencia_Localidad IS NOT NULL AND Agencia_Provincia IS NOT NULL
+        SELECT Agencia_Localidad AS localidad, Agencia_Provincia AS provincia FROM gd_esquema.Maestra
         UNION
-        SELECT DISTINCT Agente_Localidad,  Agente_Provincia
-        FROM gd_esquema.Maestra
-        WHERE Agente_Localidad  IS NOT NULL AND Agente_Provincia  IS NOT NULL
+        SELECT Agente_Localidad, Agente_Provincia FROM gd_esquema.Maestra
         UNION
-        SELECT DISTINCT Cliente_Localidad, Cliente_Provincia
-        FROM gd_esquema.Maestra
-        WHERE Cliente_Localidad IS NOT NULL AND Cliente_Provincia IS NOT NULL
+        SELECT Cliente_Localidad, Cliente_Provincia FROM gd_esquema.Maestra
     ) src
-    JOIN DB_GD1C2026.provincias pr ON pr.nombre = src.provincia;
+    JOIN DB_GD1C2026.provincias pr ON pr.nombre = src.provincia
+    WHERE src.localidad IS NOT NULL AND src.provincia IS NOT NULL
+    GROUP BY src.localidad;
 END;
 GO
+
 
 /* ---- ciudades ---- */
 CREATE PROCEDURE DB_GD1C2026.migrar_ciudades AS
@@ -787,32 +780,23 @@ GO
 /* ---- clientes ---- */
 CREATE PROCEDURE DB_GD1C2026.migrar_clientes AS
 BEGIN
-    DECLARE @offset BIGINT;
+    DECLARE @offset BIGINT = (SELECT ISNULL(MAX(codigo_cliente), 0) FROM DB_GD1C2026.clientes);
 
-    SET @offset = (
-        SELECT ISNULL(MAX(codigo_cliente), 0)
-        FROM DB_GD1C2026.clientes
-    );
-
+    WITH clientes_unicos AS (
+        SELECT m.Cliente_Nombre, m.Cliente_Apellido, m.Cliente_Dni, m.Cliente_Tel, m.Cliente_Mail,
+               m.Cliente_Direccion, m.Cliente_Fecha_Nac, m.Cliente_Localidad,
+               ROW_NUMBER() OVER (PARTITION BY m.Cliente_Dni ORDER BY m.Cliente_Localidad) AS rn
+        FROM gd_esquema.Maestra m
+        WHERE m.Cliente_Dni IS NOT NULL
+    )
     INSERT INTO DB_GD1C2026.clientes (codigo_cliente, codigo_localidad, nombre, apellido, dni, telefono, email, direccion, fecha_nacimiento)
-    SELECT DISTINCT
-        @offset + ROW_NUMBER() OVER (ORDER BY m.Cliente_Dni) AS codigo_cliente,
-        l.codigo_localidad,
-        m.Cliente_Nombre             AS nombre,
-        m.Cliente_Apellido           AS apellido,
-        m.Cliente_Dni                AS dni,
-        m.Cliente_Tel                AS telefono,
-        m.Cliente_Mail               AS email,
-        m.Cliente_Direccion          AS direccion,
-        CAST(m.Cliente_Fecha_Nac AS DATE) AS fecha_nacimiento
-    FROM (
-        SELECT DISTINCT Cliente_Nombre, Cliente_Apellido, Cliente_Dni, Cliente_Tel, Cliente_Mail,
-                        Cliente_Direccion, Cliente_Fecha_Nac, Cliente_Localidad, Cliente_Provincia
-        FROM gd_esquema.Maestra
-        WHERE Cliente_Dni IS NOT NULL
-    ) m
-    JOIN DB_GD1C2026.localidades l ON l.nombre = m.Cliente_Localidad
-END; 
+    SELECT @offset + ROW_NUMBER() OVER (ORDER BY cu.Cliente_Dni) AS codigo_cliente,
+           l.codigo_localidad, cu.Cliente_Nombre, cu.Cliente_Apellido, cu.Cliente_Dni,
+           cu.Cliente_Tel, cu.Cliente_Mail, cu.Cliente_Direccion, CAST(cu.Cliente_Fecha_Nac AS DATE)
+    FROM clientes_unicos cu
+    JOIN DB_GD1C2026.localidades l ON l.nombre = cu.Cliente_Localidad
+    WHERE rn = 1;
+END;
 GO
 
 /* ---- alianzas ---- */
@@ -1348,24 +1332,26 @@ GO
 = = = = = = = = = = = EJECUCI�N DE MIGRACI�N = = = = = = = =
 ========================================================= */
 
-BEGIN TRANSACTION
 
     EXECUTE DB_GD1C2026.migrar_paises;
     EXECUTE DB_GD1C2026.migrar_provincias;
     EXECUTE DB_GD1C2026.migrar_localidades;
     EXECUTE DB_GD1C2026.migrar_ciudades;
-
-
     EXECUTE DB_GD1C2026.migrar_agencias;
     EXECUTE DB_GD1C2026.migrar_agentes;
     EXECUTE DB_GD1C2026.migrar_clientes;
 
-	SELECT * FROM DB_GD1C2026.agencias;
-    SELECT * FROM DB_GD1C2026.agentes;
-    SELECT * FROM DB_GD1C2026.clientes;
 
-ROLLBACK TRANSACTION
-    EXECUTE DB_GD1C2026.migrar_alianzas;
+    EXECUTE DB_GD1C2026.migrar_aspectos;
+    EXECUTE DB_GD1C2026.migrar_encuestas;
+    EXECUTE DB_GD1C2026.migrar_valoraciones;
+
+    SELECT * FROM DB_GD1C2026.aspectos;
+    SELECT * FROM DB_GD1C2026.encuestas;
+    SELECT * FROM DB_GD1C2026.valoraciones;
+
+    EXECUTE DB_GD1C2026.migrar_alianzas; --------
+
     EXECUTE DB_GD1C2026.migrar_aerolineas;
     EXECUTE DB_GD1C2026.migrar_aeropuertos;
     EXECUTE DB_GD1C2026.migrar_vuelos_disponibles;
@@ -1374,9 +1360,6 @@ ROLLBACK TRANSACTION
     EXECUTE DB_GD1C2026.migrar_hospedajes_disponibles;
     EXECUTE DB_GD1C2026.migrar_habitaciones_disponibles;
     EXECUTE DB_GD1C2026.migrar_excursiones_disponibles;
-    EXECUTE DB_GD1C2026.migrar_aspectos;
-    EXECUTE DB_GD1C2026.migrar_encuestas;
-    EXECUTE DB_GD1C2026.migrar_valoraciones;
     EXECUTE DB_GD1C2026.migrar_canales_venta;
     EXECUTE DB_GD1C2026.migrar_medios_pago;
     EXECUTE DB_GD1C2026.migrar_estado_propuesta;
