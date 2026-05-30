@@ -15,7 +15,6 @@ IF OBJECT_ID('DB_GD1C2026.migrar_alianzas',                   'P') IS NOT NULL D
 IF OBJECT_ID('DB_GD1C2026.migrar_aerolineas',                 'P') IS NOT NULL DROP PROCEDURE DB_GD1C2026.migrar_aerolineas;
 IF OBJECT_ID('DB_GD1C2026.migrar_aeropuertos',                'P') IS NOT NULL DROP PROCEDURE DB_GD1C2026.migrar_aeropuertos;
 IF OBJECT_ID('DB_GD1C2026.migrar_vuelos_disponibles',         'P') IS NOT NULL DROP PROCEDURE DB_GD1C2026.migrar_vuelos_disponibles;
-IF OBJECT_ID('DB_GD1C2026.migrar_aeropuertos_por_vuelos',     'P') IS NOT NULL DROP PROCEDURE DB_GD1C2026.migrar_aeropuertos_por_vuelos;
 IF OBJECT_ID('DB_GD1C2026.migrar_proveedores',                'P') IS NOT NULL DROP PROCEDURE DB_GD1C2026.migrar_proveedores;
 IF OBJECT_ID('DB_GD1C2026.migrar_hospedajes_disponibles',     'P') IS NOT NULL DROP PROCEDURE DB_GD1C2026.migrar_hospedajes_disponibles;
 IF OBJECT_ID('DB_GD1C2026.migrar_habitaciones_disponibles',   'P') IS NOT NULL DROP PROCEDURE DB_GD1C2026.migrar_habitaciones_disponibles;
@@ -49,7 +48,6 @@ IF OBJECT_ID('DB_GD1C2026.vuelos_por_venta',                  'U') IS NOT NULL D
 IF OBJECT_ID('DB_GD1C2026.vuelos',                            'U') IS NOT NULL DROP TABLE DB_GD1C2026.vuelos;
 IF OBJECT_ID('DB_GD1C2026.propuestas_vuelo',                  'U') IS NOT NULL DROP TABLE DB_GD1C2026.propuestas_vuelo;
 IF OBJECT_ID('DB_GD1C2026.vuelos_disponibles',                'U') IS NOT NULL DROP TABLE DB_GD1C2026.vuelos_disponibles;
-IF OBJECT_ID('DB_GD1C2026.aeropuertos_por_vuelos_disponibles','U') IS NOT NULL DROP TABLE DB_GD1C2026.aeropuertos_por_vuelos_disponibles;
 IF OBJECT_ID('DB_GD1C2026.aeropuertos',                       'U') IS NOT NULL DROP TABLE DB_GD1C2026.aeropuertos;
 IF OBJECT_ID('DB_GD1C2026.aerolineas',                        'U') IS NOT NULL DROP TABLE DB_GD1C2026.aerolineas;
 IF OBJECT_ID('DB_GD1C2026.alianzas',                          'U') IS NOT NULL DROP TABLE DB_GD1C2026.alianzas;
@@ -93,7 +91,7 @@ CREATE TABLE DB_GD1C2026.paises (
     codigo_pais BIGINT          NOT NULL,
     nombre      NVARCHAR(255)   NOT NULL,
     CONSTRAINT PK_paises PRIMARY KEY (codigo_pais)
-); 
+);
 GO
 
 CREATE TABLE DB_GD1C2026.provincias (
@@ -103,7 +101,7 @@ CREATE TABLE DB_GD1C2026.provincias (
     CONSTRAINT PK_provincias PRIMARY KEY (codigo_provincia),
     CONSTRAINT FK_provincias_paises FOREIGN KEY (codigo_pais)
         REFERENCES DB_GD1C2026.paises (codigo_pais)
-); 
+);
 GO
 
 CREATE TABLE DB_GD1C2026.localidades (
@@ -113,7 +111,7 @@ CREATE TABLE DB_GD1C2026.localidades (
     CONSTRAINT PK_localidades PRIMARY KEY (codigo_localidad),
     CONSTRAINT FK_localidades_provincias FOREIGN KEY (codigo_provincia)
         REFERENCES DB_GD1C2026.provincias (codigo_provincia)
-); 
+);
 GO
 
 CREATE TABLE DB_GD1C2026.ciudades (
@@ -126,7 +124,7 @@ CREATE TABLE DB_GD1C2026.ciudades (
         REFERENCES DB_GD1C2026.paises (codigo_pais),
     CONSTRAINT FK_ciudades_localidades FOREIGN KEY (codigo_localidad)
         REFERENCES DB_GD1C2026.localidades (codigo_localidad)
-); 
+);
 GO
 
 /* =========================================================
@@ -142,7 +140,7 @@ CREATE TABLE DB_GD1C2026.agencias (
     CONSTRAINT PK_agencias PRIMARY KEY (numero_agencia),
     CONSTRAINT FK_agencias_localidades FOREIGN KEY (codigo_localidad)
         REFERENCES DB_GD1C2026.localidades (codigo_localidad)
-); 
+);
 GO
 
 CREATE TABLE DB_GD1C2026.agentes (
@@ -161,7 +159,7 @@ CREATE TABLE DB_GD1C2026.agentes (
         REFERENCES DB_GD1C2026.agencias (numero_agencia),
     CONSTRAINT FK_agentes_localidades FOREIGN KEY (codigo_localidad)
         REFERENCES DB_GD1C2026.localidades (codigo_localidad)
-); 
+);
 GO
 
 CREATE TABLE DB_GD1C2026.clientes (
@@ -177,7 +175,7 @@ CREATE TABLE DB_GD1C2026.clientes (
     CONSTRAINT PK_clientes PRIMARY KEY (codigo_cliente),
     CONSTRAINT FK_clientes_localidades FOREIGN KEY (codigo_localidad)
         REFERENCES DB_GD1C2026.localidades (codigo_localidad)
-); 
+);
 GO
 
 /* =========================================================
@@ -188,21 +186,21 @@ CREATE TABLE DB_GD1C2026.aspectos (
     codigo_aspecto  BIGINT          NOT NULL,
     descripcion     NVARCHAR(MAX)   NOT NULL,
     CONSTRAINT PK_aspectos PRIMARY KEY (codigo_aspecto)
-); 
+);
 GO
 
 CREATE TABLE DB_GD1C2026.encuestas (
     codigo_encuesta         BIGINT          NOT NULL,
-    descripcion             NVARCHAR(MAX)   NOT NULL,
-    fecha_realizado         DATE            NOT NULL,
+    descripcion             NVARCHAR(MAX)       NULL,
+    fecha_realizado         DATE                NULL,
     comentario_abierto      NVARCHAR(MAX)       NULL,
     CONSTRAINT PK_encuestas PRIMARY KEY (codigo_encuesta)
-); 
+);
 GO
 
 CREATE TABLE DB_GD1C2026.valoraciones (
     codigo_valoracion   BIGINT  NOT NULL,
-    codigo_encuesta     BIGINT  NOT NULL,
+    codigo_encuesta     BIGINT  NULL,
     codigo_aspecto      BIGINT  NOT NULL,
     puntaje             INT     NOT NULL,
     CONSTRAINT PK_valoraciones PRIMARY KEY (codigo_valoracion),
@@ -210,7 +208,7 @@ CREATE TABLE DB_GD1C2026.valoraciones (
         REFERENCES DB_GD1C2026.encuestas (codigo_encuesta),
     CONSTRAINT FK_valoraciones_aspectos  FOREIGN KEY (codigo_aspecto)
         REFERENCES DB_GD1C2026.aspectos (codigo_aspecto)
-); 
+);
 GO
 
 /* =========================================================
@@ -236,7 +234,7 @@ CREATE TABLE DB_GD1C2026.solicitudes_cotizacion (
         REFERENCES DB_GD1C2026.agentes (legajo_agente),
     CONSTRAINT FK_sc_encuestas FOREIGN KEY (codigo_encuesta)
         REFERENCES DB_GD1C2026.encuestas (codigo_encuesta)
-); 
+);
 GO
 
 CREATE TABLE DB_GD1C2026.detalle_solicitud_ciudades (
@@ -249,7 +247,7 @@ CREATE TABLE DB_GD1C2026.detalle_solicitud_ciudades (
         REFERENCES DB_GD1C2026.solicitudes_cotizacion (numero_solicitud),
     CONSTRAINT FK_dsc_ciudades    FOREIGN KEY (codigo_ciudad)
         REFERENCES DB_GD1C2026.ciudades (codigo_ciudad)
-); 
+);
 GO
 
 /* =========================================================
@@ -260,19 +258,19 @@ GO
 CREATE TABLE DB_GD1C2026.estado_propuesta (
     estado  NVARCHAR(50) NOT NULL,
     CONSTRAINT PK_estado_propuesta PRIMARY KEY (estado)
-); 
+);
 GO
 
 CREATE TABLE DB_GD1C2026.canal_venta (
     nombre  NVARCHAR(50) NOT NULL,
     CONSTRAINT PK_canal_venta PRIMARY KEY (nombre)
-); 
+);
 GO
 
 CREATE TABLE DB_GD1C2026.medio_pago (
     nombre  NVARCHAR(50) NOT NULL,
     CONSTRAINT PK_medio_pago PRIMARY KEY (nombre)
-); 
+);
 GO
 
 /* =========================================================
@@ -301,7 +299,7 @@ CREATE TABLE DB_GD1C2026.propuestas (
         REFERENCES DB_GD1C2026.agentes (legajo_agente),
     CONSTRAINT FK_propuestas_estado       FOREIGN KEY (estado_propuesta)
         REFERENCES DB_GD1C2026.estado_propuesta (estado)
-); 
+);
 GO
 
 /* =========================================================
@@ -314,7 +312,7 @@ CREATE TABLE DB_GD1C2026.ventas (
     codigo_cliente      BIGINT          NOT NULL,
     legajo_agente       BIGINT          NOT NULL,
     codigo_encuesta     BIGINT              NULL,
-    codigo_propuesta    BIGINT          NOT NULL,
+    codigo_propuesta    BIGINT              NULL,
     canal_venta         NVARCHAR(50)    NOT NULL,
     medio_pago          NVARCHAR(50)    NOT NULL,
     fecha_venta         DATE            NOT NULL,
@@ -337,7 +335,7 @@ CREATE TABLE DB_GD1C2026.ventas (
         REFERENCES DB_GD1C2026.canal_venta (nombre),
     CONSTRAINT FK_ventas_medio_pago FOREIGN KEY (medio_pago)
         REFERENCES DB_GD1C2026.medio_pago (nombre)
-); 
+);
 GO
 
 /* =========================================================
@@ -356,7 +354,7 @@ CREATE TABLE DB_GD1C2026.hospedajes_disponibles (
     CONSTRAINT PK_hospedajes_disponibles PRIMARY KEY (codigo_hospedaje),
     CONSTRAINT FK_hospedajes_disp_ciudades FOREIGN KEY (codigo_ciudad)
         REFERENCES DB_GD1C2026.ciudades (codigo_ciudad)
-); 
+);
 GO
 
 CREATE TABLE DB_GD1C2026.hospedajes (
@@ -372,7 +370,7 @@ CREATE TABLE DB_GD1C2026.hospedajes (
     CONSTRAINT PK_hospedajes PRIMARY KEY (codigo_hospedaje),
     CONSTRAINT FK_hospedajes_disponibles FOREIGN KEY (codigo_hospedaje_disponible)
         REFERENCES DB_GD1C2026.hospedajes_disponibles (codigo_hospedaje)
-); 
+);
 GO
 
 CREATE TABLE DB_GD1C2026.hospedajes_por_venta (
@@ -383,7 +381,7 @@ CREATE TABLE DB_GD1C2026.hospedajes_por_venta (
         REFERENCES DB_GD1C2026.ventas (numero_venta),
     CONSTRAINT FK_hpv_hospedajes FOREIGN KEY (codigo_hospedaje)
         REFERENCES DB_GD1C2026.hospedajes (codigo_hospedaje)
-); 
+);
 GO
 
 CREATE TABLE DB_GD1C2026.propuestas_hospedaje (
@@ -402,7 +400,7 @@ CREATE TABLE DB_GD1C2026.propuestas_hospedaje (
         REFERENCES DB_GD1C2026.clientes (codigo_cliente),
     CONSTRAINT FK_phosp_hospedajes_disp FOREIGN KEY (codigo_hospedaje_disponible)
         REFERENCES DB_GD1C2026.hospedajes_disponibles (codigo_hospedaje)
-); 
+);
 GO
 
 CREATE TABLE DB_GD1C2026.habitaciones_disponibles (
@@ -413,7 +411,7 @@ CREATE TABLE DB_GD1C2026.habitaciones_disponibles (
     CONSTRAINT PK_habitaciones_disponibles PRIMARY KEY (numero_habitacion),
     CONSTRAINT FK_habitaciones_disp_hospedajes FOREIGN KEY (codigo_hospedaje)
         REFERENCES DB_GD1C2026.hospedajes_disponibles (codigo_hospedaje)
-); 
+);
 GO
 
 CREATE TABLE DB_GD1C2026.propuestas_habitacion (
@@ -426,7 +424,7 @@ CREATE TABLE DB_GD1C2026.propuestas_habitacion (
         REFERENCES DB_GD1C2026.habitaciones_disponibles (numero_habitacion),
     CONSTRAINT FK_propuestas_hospedaje FOREIGN KEY (codigo_propuesta_hospedaje)
         REFERENCES DB_GD1C2026.propuestas_hospedaje (codigo_propuesta_hospedaje)
-); 
+);
 GO
 
 /* =========================================================
@@ -436,7 +434,7 @@ GO
 CREATE TABLE DB_GD1C2026.alianzas (
     nombre_alianza  NVARCHAR(255) NOT NULL,
     CONSTRAINT PK_alianzas PRIMARY KEY (nombre_alianza)
-); 
+);
 GO
 
 CREATE TABLE DB_GD1C2026.aerolineas (
@@ -449,39 +447,29 @@ CREATE TABLE DB_GD1C2026.aerolineas (
         REFERENCES DB_GD1C2026.paises (codigo_pais),
     CONSTRAINT FK_aerolineas_alianzas FOREIGN KEY (alianza)
         REFERENCES DB_GD1C2026.alianzas (nombre_alianza)
-); 
+);
 GO
 
 CREATE TABLE DB_GD1C2026.aeropuertos (
-    codigo_aeropuerto   NVARCHAR(255)   NOT NULL,
+    codigo_aeropuerto   NVARCHAR(10)   NOT NULL,
     codigo_ciudad       BIGINT          NOT NULL,
     descripcion         NVARCHAR(200)       NULL,
     CONSTRAINT PK_aeropuertos PRIMARY KEY (codigo_aeropuerto),
     CONSTRAINT FK_aeropuertos_ciudades FOREIGN KEY (codigo_ciudad)
         REFERENCES DB_GD1C2026.ciudades (codigo_ciudad)
-); 
+);
 GO
 
 /* =========================================================
 = = = = = = = = 10) VUELOS = = = = = = = =
 ========================================================= */
 
-CREATE TABLE DB_GD1C2026.aeropuertos_por_vuelos_disponibles (
-    aeropuertos_id              BIGINT          NOT NULL,
-    codigo_aeropuerto_salida    NVARCHAR(255)   NOT NULL,
-    codigo_aeropuerto_llegada   NVARCHAR(255)   NOT NULL,
-    CONSTRAINT PK_aeropuertos_por_vuelos_disponibles PRIMARY KEY (aeropuertos_id),
-    CONSTRAINT FK_apvd_aeropuerto_salida  FOREIGN KEY (codigo_aeropuerto_salida)
-        REFERENCES DB_GD1C2026.aeropuertos (codigo_aeropuerto),
-    CONSTRAINT FK_apvd_aeropuerto_llegada FOREIGN KEY (codigo_aeropuerto_llegada)
-        REFERENCES DB_GD1C2026.aeropuertos (codigo_aeropuerto)
-); 
-GO
 
 CREATE TABLE DB_GD1C2026.vuelos_disponibles (
     codigo_vuelos_disponibles   BIGINT          NOT NULL,
     codigo_aerolinea            NVARCHAR(255)   NOT NULL,
-    codigo_aeropuertos          BIGINT          NOT NULL,
+    codigo_aeropuerto_salida    NVARCHAR(10)    NOT NULL,
+    codigo_aeropuerto_llegada   NVARCHAR(10)    NOT NULL,
     fecha_salida                DATE            NOT NULL,
     fecha_llegada               DATE            NOT NULL,
     horario_salida              NVARCHAR(50)    NOT NULL,
@@ -489,14 +477,15 @@ CREATE TABLE DB_GD1C2026.vuelos_disponibles (
     duracion                    INT                 NULL,
     incluye_carry               BIT             NOT NULL,
     incluye_valija              BIT             NOT NULL,
-    codigo_vuelo                VARCHAR(10)     NOT NULL,
     precio_unitario             DECIMAL(18,2)   NOT NULL,
     CONSTRAINT PK_vuelos_disponibles PRIMARY KEY (codigo_vuelos_disponibles),
     CONSTRAINT FK_aerolineas FOREIGN KEY (codigo_aerolinea)
         REFERENCES DB_GD1C2026.aerolineas (codigo_aerolinea),
-    CONSTRAINT FK_aeropuertos_por_vuelos_disponibles FOREIGN KEY (codigo_aeropuertos)
-        REFERENCES DB_GD1C2026.aeropuertos_por_vuelos_disponibles (aeropuertos_id)
-); 
+    CONSTRAINT FK_aeropuerto_salida FOREIGN KEY (codigo_aeropuerto_salida)
+        REFERENCES DB_GD1C2026.aeropuertos (codigo_aeropuerto),
+    CONSTRAINT FK_aeropuerto_llegada FOREIGN KEY (codigo_aeropuerto_llegada)
+        REFERENCES DB_GD1C2026.aeropuertos (codigo_aeropuerto)
+);
 GO
 
 CREATE TABLE DB_GD1C2026.propuestas_vuelo (
@@ -513,7 +502,7 @@ CREATE TABLE DB_GD1C2026.propuestas_vuelo (
         REFERENCES DB_GD1C2026.clientes (codigo_cliente),
     CONSTRAINT FK_pv_vuelos_disp     FOREIGN KEY (codigo_vuelo_disponible)
         REFERENCES DB_GD1C2026.vuelos_disponibles (codigo_vuelos_disponibles)
-); 
+);
 GO
 
 CREATE TABLE DB_GD1C2026.vuelos (
@@ -526,7 +515,7 @@ CREATE TABLE DB_GD1C2026.vuelos (
     CONSTRAINT PK_vuelos PRIMARY KEY (codigo_vuelo),
     CONSTRAINT FK_vuelos_disponibles FOREIGN KEY (codigo_vuelo_disponible)
         REFERENCES DB_GD1C2026.vuelos_disponibles (codigo_vuelos_disponibles)
-); 
+);
 GO
 
 CREATE TABLE DB_GD1C2026.vuelos_por_venta (
@@ -537,7 +526,7 @@ CREATE TABLE DB_GD1C2026.vuelos_por_venta (
         REFERENCES DB_GD1C2026.vuelos (codigo_vuelo),
     CONSTRAINT FK_vpv_ventas FOREIGN KEY (codigo_venta)
         REFERENCES DB_GD1C2026.ventas (numero_venta)
-); 
+);
 GO
 
 /* =========================================================
@@ -550,7 +539,7 @@ CREATE TABLE DB_GD1C2026.proveedores (
     email               NVARCHAR(255)   NOT NULL,
     telefono            NVARCHAR(255)   NOT NULL,
     CONSTRAINT PK_proveedores PRIMARY KEY (numero_proveedor)
-); 
+);
 GO
 
 /* =========================================================
@@ -568,7 +557,7 @@ CREATE TABLE DB_GD1C2026.excursiones_disponibles (
     CONSTRAINT PK_excursiones_disponibles PRIMARY KEY (codigo_excursion_disponibles),
     CONSTRAINT FK_excursiones_disp_proveedores FOREIGN KEY (codigo_proveedor)
         REFERENCES DB_GD1C2026.proveedores (numero_proveedor)
-); 
+);
 GO
 
 /* =========================================================
@@ -586,7 +575,7 @@ CREATE TABLE DB_GD1C2026.excursiones (
     CONSTRAINT PK_excursiones PRIMARY KEY (codigo_excursion),
     CONSTRAINT FK_excursiones_disponibles FOREIGN KEY (codigo_excursion_disponibles)
         REFERENCES DB_GD1C2026.excursiones_disponibles (codigo_excursion_disponibles)
-); 
+);
 GO
 
 CREATE TABLE DB_GD1C2026.excursiones_por_venta (
@@ -597,7 +586,7 @@ CREATE TABLE DB_GD1C2026.excursiones_por_venta (
         REFERENCES DB_GD1C2026.ventas (numero_venta),
     CONSTRAINT FK_epv_excursiones FOREIGN KEY (codigo_excursion)
         REFERENCES DB_GD1C2026.excursiones (codigo_excursion)
-); 
+);
 GO
 
 /* =========================================================
@@ -738,7 +727,7 @@ BEGIN
                 ORDER BY m.Agencia_Nro_Agencia
             ) AS rn
 
-        FROM (SELECT Agencia_Nro_Agencia, Agencia_Localidad, Agencia_Direccion, 
+        FROM (SELECT Agencia_Nro_Agencia, Agencia_Localidad, Agencia_Direccion,
                 Agencia_Telefono, Agencia_Mail FROM gd_esquema.Maestra
                 WHERE Agencia_Nro_Agencia IS NOT NULL) m
 
@@ -759,10 +748,10 @@ GO
 CREATE PROCEDURE DB_GD1C2026.migrar_agentes AS
 BEGIN
     WITH agentes_unicos AS (
-        SELECT m.Agente_Legajo AS legajo_agente, m.Agencia_Nro_Agencia AS agencia, 
-            l.codigo_localidad, m.Agente_Nombre AS nombre, m.Agente_Apellido AS apellido, 
-            m.Agente_Dni AS dni, m.Agente_Direccion AS direccion, 
-            CAST(m.Agente_Fecha_Nac AS DATE) AS fecha_nacimiento, 
+        SELECT m.Agente_Legajo AS legajo_agente, m.Agencia_Nro_Agencia AS agencia,
+            l.codigo_localidad, m.Agente_Nombre AS nombre, m.Agente_Apellido AS apellido,
+            m.Agente_Dni AS dni, m.Agente_Direccion AS direccion,
+            m.Agente_Fecha_Nac AS fecha_nacimiento,
             m.Agente_Telefono AS telefono, m.Agente_Mail AS email,
         ROW_NUMBER() OVER (PARTITION BY m.Agente_Legajo ORDER BY m.Agente_Legajo) AS rn
         FROM gd_esquema.Maestra m
@@ -806,7 +795,7 @@ BEGIN
     SELECT DISTINCT Aerolinea_Alianza
     FROM gd_esquema.Maestra
     WHERE Aerolinea_Alianza IS NOT NULL;
-END; 
+END;
 GO
 
 /* ---- aerolineas ---- */
@@ -821,7 +810,7 @@ BEGIN
     FROM gd_esquema.Maestra m
     JOIN DB_GD1C2026.paises p ON p.nombre = m.Aerolinea_Pais
     WHERE m.Aerolinea_Codigo IS NOT NULL;
-END; 
+END;
 GO
 
 /* ---- aeropuertos ---- */
@@ -848,22 +837,24 @@ BEGIN
         WHERE Aeropuerto_Llegada_Codigo IS NOT NULL
     ) src
     JOIN DB_GD1C2026.ciudades c ON c.nombre = src.ciudad;
-END; 
+END;
 GO
 
 /* ---- vuelos_disponibles ---- */
 CREATE PROCEDURE DB_GD1C2026.migrar_vuelos_disponibles AS
 BEGIN
     INSERT INTO DB_GD1C2026.vuelos_disponibles (
-        codigo_vuelos_disponibles, codigo_aerolinea,
-        fecha_salida, fecha_llegada, horario_salida, horario_llegada,
+        codigo_vuelos_disponibles, codigo_aerolinea, codigo_aeropuerto_salida,
+        codigo_aeropuerto_llegada, fecha_salida, fecha_llegada, horario_salida, horario_llegada,
         duracion, incluye_carry, incluye_valija, precio_unitario
     )
     SELECT DISTINCT
-        ROW_NUMBER() OVER (ORDER BY m.Vuelo_Fecha_Salida, m.Aerolinea_Codigo) AS codigo_vuelos_disponibles,
+        ROW_NUMBER() OVER (ORDER BY m.Aerolinea_Codigo) AS codigo_vuelos_disponibles,
         m.Aerolinea_Codigo          AS codigo_aerolinea,
-        CAST(m.Vuelo_Fecha_Salida   AS DATE) AS fecha_salida,
-        CAST(m.Vuelo_Fecha_Llegada  AS DATE) AS fecha_llegada,
+        m.Aeropuerto_Salida_Codigo  AS codigo_aeropuerto_salida,
+        m.Aeropuerto_Llegada_Codigo AS codigo_aeropuerto_llegada,
+        m.Vuelo_Fecha_Salida        AS fecha_salida,
+        m.Vuelo_Fecha_Llegada       AS fecha_llegada,
         m.Vuelo_Horario_Salida      AS horario_salida,
         m.Vuelo_Horario_Llegada     AS horario_llegada,
         m.Vuelo_Duracion            AS duracion,
@@ -872,38 +863,19 @@ BEGIN
         m.Vuelo_Precio              AS precio_unitario
     FROM gd_esquema.Maestra m
     WHERE m.Aerolinea_Codigo IS NOT NULL AND m.Vuelo_Fecha_Salida IS NOT NULL;
-END; 
-GO
-
-/* ---- aeropuertos_por_vuelos_disponibles ---- */
-CREATE PROCEDURE DB_GD1C2026.migrar_aeropuertos_por_vuelos AS
-BEGIN
-    INSERT INTO DB_GD1C2026.aeropuertos_por_vuelos_disponibles (
-        aeropuertos_id,
-        codigo_aeropuerto_salida,
-        codigo_aeropuerto_llegada
-    )
-    SELECT DISTINCT
-        ROW_NUMBER() OVER (ORDER BY m.Aeropuerto_Salida_Codigo, m.Aeropuerto_Llegada_Codigo) AS aeropuertos_id,
-        m.Aeropuerto_Salida_Codigo  AS codigo_aeropuerto_salida,
-        m.Aeropuerto_Llegada_Codigo AS codigo_aeropuerto_llegada
-    FROM gd_esquema.Maestra m
-    WHERE m.Aeropuerto_Salida_Codigo IS NOT NULL AND m.Aeropuerto_Llegada_Codigo IS NOT NULL;
-END; 
+END;
 GO
 
 /* ---- proveedores ---- */
 CREATE PROCEDURE DB_GD1C2026.migrar_proveedores AS
 BEGIN
     INSERT INTO DB_GD1C2026.proveedores (numero_proveedor, nombre, email, telefono)
-    SELECT DISTINCT
-        ROW_NUMBER() OVER (ORDER BY m.Proveedor_Nombre) AS numero_proveedor,
-        m.Proveedor_Nombre   AS nombre,
-        m.Proveedor_Mail     AS email,
-        m.Proveedor_Telefono AS telefono
-    FROM gd_esquema.Maestra m
-    WHERE m.Proveedor_Nombre IS NOT NULL;
-END; 
+    SELECT ROW_NUMBER() OVER (ORDER BY nombre) AS numero_proveedor, nombre, email, telefono
+    FROM (
+        SELECT DISTINCT m.Proveedor_Nombre AS nombre, m.Proveedor_Mail AS email, m.Proveedor_Telefono AS telefono
+        FROM gd_esquema.Maestra m WHERE m.Proveedor_Nombre IS NOT NULL
+    ) x;
+END;
 GO
 
 /* ---- hospedajes_disponibles ---- */
@@ -926,7 +898,7 @@ BEGIN
     JOIN DB_GD1C2026.ciudades c ON c.nombre = m.Hospedaje_Ciudad
     JOIN DB_GD1C2026.paises   p ON p.nombre = m.Hospedaje_Pais
     WHERE m.Hospedaje_Nombre IS NOT NULL;
-END; 
+END;
 GO
 
 /* ---- habitaciones_disponibles ---- */
@@ -941,52 +913,54 @@ BEGIN
     FROM gd_esquema.Maestra m
     JOIN DB_GD1C2026.hospedajes_disponibles hd ON hd.nombre = m.Hospedaje_Nombre
     WHERE m.Habitacion_Nombre IS NOT NULL;
-END; 
+END;
 GO
 
 /* ---- excursiones_disponibles ---- */
 CREATE PROCEDURE DB_GD1C2026.migrar_excursiones_disponibles AS
 BEGIN
-    INSERT INTO DB_GD1C2026.excursiones_disponibles (
-        codigo_excursion_disponibles, codigo_proveedor,
-        nombre, precio_unitario, duracion, descripcion
-    )
-    SELECT DISTINCT
-        ROW_NUMBER() OVER (ORDER BY m.Excursion_Nombre) AS codigo_excursion_disponibles,
-        pr.numero_proveedor,
-        m.Excursion_Nombre       AS nombre,
-        m.Excursion_Precio       AS precio_unitario,
-        m.Excursion_Duracion     AS duracion,
-        m.Excursion_Descripcion  AS descripcion
-    FROM gd_esquema.Maestra m
-    JOIN DB_GD1C2026.proveedores pr ON pr.nombre = m.Proveedor_Nombre
-    WHERE m.Excursion_Nombre IS NOT NULL;
-END; 
+    INSERT INTO DB_GD1C2026.excursiones_disponibles (codigo_excursion_disponibles, codigo_proveedor, nombre, horario, precio_unitario, duracion, descripcion)
+    SELECT ROW_NUMBER() OVER (ORDER BY nombre) AS codigo_excursion_disponibles, numero_proveedor, nombre, horario, precio_unitario, duracion, descripcion
+    FROM (
+        SELECT DISTINCT pr.numero_proveedor, m.Excursion_Nombre AS nombre, m.Excursion_Horario AS horario,
+               m.Excursion_Precio AS precio_unitario, m.Excursion_Duracion AS duracion, m.Excursion_Descripcion AS descripcion
+        FROM gd_esquema.Maestra m
+        JOIN DB_GD1C2026.proveedores pr ON pr.nombre = m.Proveedor_Nombre
+        WHERE m.Excursion_Nombre IS NOT NULL
+    ) x;
+END;
 GO
 
 /* ---- aspectos ---- */
 CREATE PROCEDURE DB_GD1C2026.migrar_aspectos AS
 BEGIN
     INSERT INTO DB_GD1C2026.aspectos (codigo_aspecto, descripcion)
-    SELECT DISTINCT
-        ROW_NUMBER() OVER (ORDER BY m.Aspecto_Aspecto) AS codigo_aspecto,
-        m.Aspecto_Aspecto AS descripcion
-    FROM gd_esquema.Maestra m
-    WHERE m.Aspecto_Aspecto IS NOT NULL;
-END; 
+    SELECT ROW_NUMBER() OVER (ORDER BY descripcion) AS codigo_aspecto, descripcion
+        FROM (SELECT DISTINCT m.Aspecto_Aspecto AS descripcion
+                FROM gd_esquema.Maestra m WHERE m.Aspecto_Aspecto IS NOT NULL) x;
+END;
 GO
 
 /* ---- encuestas ---- */
 CREATE PROCEDURE DB_GD1C2026.migrar_encuestas AS
 BEGIN
+    WITH encuestas_unicas AS
+        (
+            SELECT
+                m.Encuesta_Codigo_Encuesta   AS codigo_encuesta,
+                m.Encuesta_Fecha_Encuesta    AS fecha_realizado,
+                m.Encuesta_Comentarios       AS comentario_abierto,
+
+                ROW_NUMBER() OVER(PARTITION BY m.Encuesta_Codigo_Encuesta ORDER BY m.Encuesta_Codigo_Encuesta) as rn
+
+            FROM gd_esquema.Maestra m
+                WHERE Encuesta_Codigo_Encuesta IS NOT NULL
+        )
+
     INSERT INTO DB_GD1C2026.encuestas (codigo_encuesta, fecha_realizado, comentario_abierto)
-    SELECT DISTINCT
-        m.Encuesta_Codigo_Encuesta   AS codigo_encuesta,
-        CAST(m.Encuesta_Fecha_Encuesta AS DATE) AS fecha_realizado,
-        m.Encuesta_Comentarios       AS comentario_abierto
-    FROM gd_esquema.Maestra m
-    WHERE m.Encuesta_Codigo_Encuesta IS NOT NULL;
-END; 
+    SELECT codigo_encuesta, fecha_realizado, comentario_abierto FROM encuestas_unicas
+    WHERE rn = 1;
+END;
 GO
 
 /* ---- valoraciones ---- */
@@ -1003,7 +977,7 @@ BEGIN
     WHERE m.Encuesta_Codigo_Encuesta IS NOT NULL
       AND m.Aspecto_Aspecto          IS NOT NULL
       AND m.Detalle_Encuesta_Puntaje IS NOT NULL;
-END; 
+END;
 GO
 
 /* ---- canales de venta ---- */
@@ -1013,7 +987,7 @@ BEGIN
     SELECT DISTINCT m.Venta_Canal_Venta
     FROM gd_esquema.Maestra m
     WHERE m.Venta_Canal_Venta IS NOT NULL;
-END; 
+END;
 GO
 
 /* ---- medios de pago ---- */
@@ -1023,7 +997,7 @@ BEGIN
     SELECT DISTINCT m.Venta_Medio_Pago
     FROM gd_esquema.Maestra m
     WHERE m.Venta_Medio_Pago IS NOT NULL;
-END; 
+END;
 GO
 
 /* ---- estado_propuesta ---- */
@@ -1033,7 +1007,7 @@ BEGIN
     SELECT DISTINCT m.Propuesta_Estado
     FROM gd_esquema.Maestra m
     WHERE m.Propuesta_Estado IS NOT NULL;
-END; 
+END;
 GO
 
 /* ---- solicitudes_cotizacion ---- */
@@ -1042,23 +1016,26 @@ BEGIN
     INSERT INTO DB_GD1C2026.solicitudes_cotizacion (
         numero_solicitud, codigo_cliente, codigo_agente, codigo_encuesta,
         fecha_realizada, fecha_inicio_tentativa, fecha_fin_tentativa,
-        cantidad_pasajeros, presupuesto_estimado, observaciones
+        cantidad_pasajeros, cantidad_dias_aproximados, presupuesto_estimado, observaciones
     )
     SELECT DISTINCT
         m.Solicitud_Nro_Solicitud                   AS numero_solicitud,
         cl.codigo_cliente,
         m.Agente_Legajo                             AS codigo_agente,
         m.Encuesta_Codigo_Encuesta                  AS codigo_encuesta,
-        CAST(m.Solicitud_Fecha_Solicitud AS DATE)    AS fecha_realizada,
-        CAST(m.Solicitud_Fecha_Inicio_Tentativa AS DATE) AS fecha_inicio_tentativa,
-        CAST(m.Solicitud_Fecha_Fin_Tentativa    AS DATE) AS fecha_fin_tentativa,
+        m.Solicitud_Fecha_Solicitud                 AS fecha_realizada,
+        m.Solicitud_Fecha_Inicio_Tentativa          AS fecha_inicio_tentativa,
+        m.Solicitud_Fecha_Fin_Tentativa             AS fecha_fin_tentativa,
         m.Solicitud_Cant_Pax                        AS cantidad_pasajeros,
+        DATEDIFF(DAY,
+                 Solicitud_Fecha_Inicio_Tentativa,
+                 Solicitud_Fecha_Fin_Tentativa)     AS cantidad_dias_aproximados,
         m.Solicitud_Presupuesto_Estimado            AS presupuesto_estimado,
         m.Solicitud_Observaciones                   AS observaciones
     FROM gd_esquema.Maestra m
     JOIN DB_GD1C2026.clientes cl ON cl.dni = m.Cliente_Dni
     WHERE m.Solicitud_Nro_Solicitud IS NOT NULL;
-END; 
+END;
 GO
 
 /* ---- detalle_solicitud_ciudades ---- */
@@ -1076,7 +1053,7 @@ BEGIN
     JOIN DB_GD1C2026.ciudades c ON c.nombre = m.Detalle_Solicitud_Ciudad
     WHERE m.Solicitud_Nro_Solicitud IS NOT NULL
       AND m.Detalle_Solicitud_Ciudad IS NOT NULL;
-END; 
+END;
 GO
 
 /* ---- propuestas ---- */
@@ -1093,18 +1070,19 @@ BEGIN
         cl.codigo_cliente,
         m.Solicitud_Nro_Solicitud               AS codigo_solicitud_cotizacion,
         m.Agente_Legajo                         AS codigo_agente,
-        m.Propuesta_Estado                      AS estado_propuesta,
-        CAST(m.Propuesta_Fecha_Emision AS DATE)  AS fecha_emision,
-        CAST(m.Propuesta_Vigencia_Hasta AS DATE) AS vigencia_hasta,
-        CAST(m.Propuesta_Fecha_Desde    AS DATE) AS fecha_desde,
-        CAST(m.Propuesta_Fecha_Hasta    AS DATE) AS fecha_hasta,
+        ep.estado                               AS estado_propuesta,
+        m.Propuesta_Fecha_Emision               AS fecha_emision,
+        m.Propuesta_Vigencia_Hasta              AS vigencia_hasta,
+        m.Propuesta_Fecha_Desde                 AS fecha_desde,
+        m.Propuesta_Fecha_Hasta                 AS fecha_hasta,
         m.Propuesta_Subtotal                    AS subtotal,
         m.Propuesta_Descuento                   AS descuento,
         m.Propuesta_Importe_Total               AS importe_total
     FROM gd_esquema.Maestra m
     JOIN DB_GD1C2026.clientes cl ON cl.dni = m.Cliente_Dni
+    JOIN estado_propuesta ep ON ep.estado = m.Propuesta_Estado
     WHERE m.Propuesta_Nro_Propuesta IS NOT NULL;
-END; 
+END;
 GO
 
 /* ---- propuestas_vuelo ---- */
@@ -1125,29 +1103,32 @@ BEGIN
     JOIN DB_GD1C2026.clientes cl ON cl.dni = m.Cliente_Dni
     JOIN DB_GD1C2026.vuelos_disponibles vd
         ON vd.codigo_aerolinea = m.Aerolinea_Codigo
-        AND vd.fecha_salida    = CAST(m.Vuelo_Fecha_Salida AS DATE)
+        AND vd.fecha_salida    = m.Vuelo_Fecha_Salida
         AND vd.precio_unitario = m.Vuelo_Precio
     WHERE m.Propuesta_Nro_Propuesta IS NOT NULL
       AND m.Detalle_Propuesta_Vuelo_Cant_Pasajes IS NOT NULL;
-END; 
+END;
 GO
 
 /* ---- propuestas_habitacion ---- */
 CREATE PROCEDURE DB_GD1C2026.migrar_propuestas_habitacion AS
 BEGIN
-    INSERT INTO DB_GD1C2026.propuestas_habitacion (
-        codigo_propuesta_habitacion, codigo_habitacion_disponible, cantidad
-    )
-    SELECT
-        ROW_NUMBER() OVER (ORDER BY m.Propuesta_Nro_Propuesta, hab.numero_habitacion) AS codigo_propuesta_habitacion,
-        hab.numero_habitacion   AS codigo_habitacion_disponible,
-        m.Detalle_Propuesta_Hospedaje_Cant AS cantidad
-    FROM gd_esquema.Maestra m
-    JOIN DB_GD1C2026.hospedajes_disponibles hd ON hd.nombre = m.Hospedaje_Nombre
-    JOIN DB_GD1C2026.habitaciones_disponibles hab ON hab.codigo_hospedaje = hd.codigo_hospedaje
-    WHERE m.Propuesta_Nro_Propuesta IS NOT NULL
-      AND m.Detalle_Propuesta_Hospedaje_Cant IS NOT NULL;
-END; 
+    INSERT INTO DB_GD1C2026.propuestas_habitacion (codigo_propuesta_habitacion, codigo_habitacion_disponible, codigo_propuesta_hospedaje, cantidad)
+    SELECT ROW_NUMBER() OVER (ORDER BY numero_habitacion, codigo_propuesta_hospedaje), numero_habitacion, codigo_propuesta_hospedaje, cantidad
+    FROM (
+        SELECT DISTINCT hab.numero_habitacion, ph.codigo_propuesta_hospedaje, m.Detalle_Propuesta_Hospedaje_Cant AS cantidad
+        FROM gd_esquema.Maestra m
+        JOIN DB_GD1C2026.hospedajes_disponibles hd ON hd.nombre = m.Hospedaje_Nombre
+        JOIN DB_GD1C2026.propuestas_hospedaje ph ON ph.codigo_propuesta = m.Propuesta_Nro_Propuesta
+                                                AND ph.codigo_hospedaje_disponible = hd.codigo_hospedaje
+                                                AND ph.fecha_desde = m.Detalle_Propuesta_Hospedaje_Fecha_Desde
+                                                AND ph.fecha_hasta = m.Detalle_Propuesta_Hospedaje_Fecha_Hasta
+        JOIN DB_GD1C2026.habitaciones_disponibles hab ON hab.codigo_hospedaje = hd.codigo_hospedaje
+                                                     AND hab.descripcion = m.Habitacion_Descripcion
+                                                     AND hab.precio_noche = m.Habitacion_Precio_Noche
+        WHERE m.Propuesta_Nro_Propuesta IS NOT NULL AND m.Detalle_Propuesta_Hospedaje_Cant IS NOT NULL
+    ) x;
+END;
 GO
 
 /* ---- propuestas_hospedaje ---- */
@@ -1162,11 +1143,11 @@ BEGIN
         m.Propuesta_Nro_Propuesta   AS codigo_propuesta,
         cl.codigo_cliente,
         hd.codigo_hospedaje         AS codigo_hospedaje_disponible,
-        CAST(m.Detalle_Propuesta_Hospedaje_Fecha_Desde AS DATE) AS fecha_desde,
-        CAST(m.Detalle_Propuesta_Hospedaje_Fecha_Hasta AS DATE) AS fecha_hasta,
+        m.Detalle_Propuesta_Hospedaje_Fecha_Desde AS fecha_desde,
+        m.Detalle_Propuesta_Hospedaje_Fecha_Hasta AS fecha_hasta,
         DATEDIFF(DAY,
-            CAST(m.Detalle_Propuesta_Hospedaje_Fecha_Desde AS DATE),
-            CAST(m.Detalle_Propuesta_Hospedaje_Fecha_Hasta AS DATE)) AS cantidad_dias,
+            m.Detalle_Propuesta_Hospedaje_Fecha_Desde,
+            m.Detalle_Propuesta_Hospedaje_Fecha_Hasta) AS cantidad_dias,
         m.Detalle_Propuesta_Hospedaje_Subtotal AS subtotal
     FROM gd_esquema.Maestra m
     JOIN DB_GD1C2026.clientes cl ON cl.dni = m.Cliente_Dni
@@ -1175,7 +1156,7 @@ BEGIN
     JOIN DB_GD1C2026.propuestas_habitacion ph ON ph.codigo_habitacion_disponible = hab.numero_habitacion
     WHERE m.Propuesta_Nro_Propuesta IS NOT NULL
       AND m.Detalle_Propuesta_Hospedaje_Fecha_Desde IS NOT NULL;
-END; 
+END;
 GO
 
 /* ---- ventas ---- */
@@ -1194,16 +1175,18 @@ BEGIN
         m.Agente_Legajo              AS legajo_agente,
         m.Encuesta_Codigo_Encuesta   AS codigo_encuesta,
         m.Propuesta_Nro_Propuesta    AS codigo_propuesta,
-        m.Venta_Canal_Venta          AS canal_venta,
-        m.Venta_Medio_Pago           AS medio_pago,
-        CAST(m.Venta_Fecha_Venta AS DATE) AS fecha_venta,
+        cv.nombre                    AS canal_venta,
+        mp.nombre                    AS medio_pago,
+        m.Venta_Fecha_Venta          AS fecha_venta,
         m.Venta_Subtotal             AS subtotal,
         m.Venta_Descuento            AS descuento,
         m.Venta_Importe_Total        AS importe_total
     FROM gd_esquema.Maestra m
     JOIN DB_GD1C2026.clientes cl ON cl.dni = m.Cliente_Dni
+    JOIN DB_GD1C2026.canal_venta cv ON cv.nombre = m.Venta_Canal_Venta
+    JOIN DB_GD1C2026.medio_pago mp ON mp.nombre = m.Venta_Medio_Pago
     WHERE m.Venta_Nro_Venta IS NOT NULL;
-END; 
+END;
 GO
 
 /* ---- vuelos (detalle de venta) ---- */
@@ -1223,11 +1206,11 @@ BEGIN
     FROM gd_esquema.Maestra m
     JOIN DB_GD1C2026.vuelos_disponibles vd
         ON vd.codigo_aerolinea = m.Aerolinea_Codigo
-        AND vd.fecha_salida    = CAST(m.Vuelo_Fecha_Salida AS DATE)
+        AND vd.fecha_salida    = m.Vuelo_Fecha_Salida
         AND vd.precio_unitario = m.Vuelo_Precio
     WHERE m.Venta_Nro_Venta IS NOT NULL
       AND m.Detalle_Venta_Vuelo_Cantidad_Pasajes IS NOT NULL;
-END; 
+END;
 GO
 
 /* ---- vuelos_por_venta ---- */
@@ -1240,13 +1223,13 @@ BEGIN
     FROM gd_esquema.Maestra m
     JOIN DB_GD1C2026.vuelos_disponibles vd
         ON vd.codigo_aerolinea = m.Aerolinea_Codigo
-        AND vd.fecha_salida    = CAST(m.Vuelo_Fecha_Salida AS DATE)
+        AND vd.fecha_salida    = m.Vuelo_Fecha_Salida
         AND vd.precio_unitario = m.Vuelo_Precio
     JOIN DB_GD1C2026.vuelos v ON v.codigo_vuelo_disponible = vd.codigo_vuelos_disponibles
         AND v.codigo_reserva_operacion = m.Detalle_Venta_Vuelo_Cod_Reserva
     WHERE m.Venta_Nro_Venta IS NOT NULL
       AND m.Detalle_Venta_Vuelo_Cantidad_Pasajes IS NOT NULL;
-END; 
+END;
 GO
 
 /* ---- hospedajes (detalle de venta) ---- */
@@ -1260,8 +1243,8 @@ BEGIN
     SELECT DISTINCT
         ROW_NUMBER() OVER (ORDER BY m.Venta_Nro_Venta, hd.codigo_hospedaje) AS codigo_hospedaje,
         hd.codigo_hospedaje          AS codigo_hospedaje_disponible,
-        CAST(m.Detalle_Venta_Hospedaje_Fecha_Desde AS DATE) AS fecha_desde,
-        CAST(m.Detalle_Venta_Hospedaje_Fecha_Hasta AS DATE) AS fecha_hasta,
+        m.Detalle_Venta_Hospedaje_Fecha_Desde AS fecha_desde,
+        m.Detalle_Venta_Hospedaje_Fecha_Hasta AS fecha_hasta,
         m.Detalle_Venta_Hospedaje_Cantidad          AS cantidad,
         m.Detalle_Venta_Hospedaje_Precio_Unitario   AS precio_unitario,
         m.Detalle_Venta_Hospedaje_Cod_Reserva       AS codigo_reserva,
@@ -1270,7 +1253,7 @@ BEGIN
     JOIN DB_GD1C2026.hospedajes_disponibles hd ON hd.nombre = m.Hospedaje_Nombre
     WHERE m.Venta_Nro_Venta IS NOT NULL
       AND m.Detalle_Venta_Hospedaje_Cantidad IS NOT NULL;
-END; 
+END;
 GO
 
 /* ---- hospedajes_por_venta ---- */
@@ -1287,7 +1270,7 @@ BEGIN
         AND h.codigo_reserva = m.Detalle_Venta_Hospedaje_Cod_Reserva
     WHERE m.Venta_Nro_Venta IS NOT NULL
       AND m.Detalle_Venta_Hospedaje_Cantidad IS NOT NULL;
-END; 
+END;
 GO
 
 /* ---- excursiones (detalle de venta) ---- */
@@ -1308,7 +1291,7 @@ BEGIN
     JOIN DB_GD1C2026.excursiones_disponibles ed ON ed.nombre = m.Excursion_Nombre
     WHERE m.Venta_Nro_Venta IS NOT NULL
       AND m.Detalle_Venta_Excursion_Cant IS NOT NULL;
-END; 
+END;
 GO
 
 /* ---- excursiones_por_venta ---- */
@@ -1325,7 +1308,7 @@ BEGIN
         AND e.codigo_reserva = m.Detalle_Venta_Excursion_Cod_Reserva
     WHERE m.Venta_Nro_Venta IS NOT NULL
       AND m.Detalle_Venta_Excursion_Cant IS NOT NULL;
-END; 
+END;
 GO
 
 /* =========================================================
@@ -1340,41 +1323,43 @@ GO
     EXECUTE DB_GD1C2026.migrar_agencias;
     EXECUTE DB_GD1C2026.migrar_agentes;
     EXECUTE DB_GD1C2026.migrar_clientes;
-
-
-    EXECUTE DB_GD1C2026.migrar_aspectos;
     EXECUTE DB_GD1C2026.migrar_encuestas;
+    EXECUTE DB_GD1C2026.migrar_aspectos;
     EXECUTE DB_GD1C2026.migrar_valoraciones;
-
-    SELECT * FROM DB_GD1C2026.aspectos;
-    SELECT * FROM DB_GD1C2026.encuestas;
-    SELECT * FROM DB_GD1C2026.valoraciones;
-
-    EXECUTE DB_GD1C2026.migrar_alianzas; --------
-
-    EXECUTE DB_GD1C2026.migrar_aerolineas;
-    EXECUTE DB_GD1C2026.migrar_aeropuertos;
-    EXECUTE DB_GD1C2026.migrar_vuelos_disponibles;
-    EXECUTE DB_GD1C2026.migrar_aeropuertos_por_vuelos;
-    EXECUTE DB_GD1C2026.migrar_proveedores;
-    EXECUTE DB_GD1C2026.migrar_hospedajes_disponibles;
-    EXECUTE DB_GD1C2026.migrar_habitaciones_disponibles;
-    EXECUTE DB_GD1C2026.migrar_excursiones_disponibles;
+    EXECUTE DB_GD1C2026.migrar_solicitudes_cotizacion;
+    EXECUTE DB_GD1C2026.migrar_detalle_solicitud_ciudades;
     EXECUTE DB_GD1C2026.migrar_canales_venta;
     EXECUTE DB_GD1C2026.migrar_medios_pago;
     EXECUTE DB_GD1C2026.migrar_estado_propuesta;
-    EXECUTE DB_GD1C2026.migrar_solicitudes_cotizacion;
-    EXECUTE DB_GD1C2026.migrar_detalle_solicitud_ciudades;
     EXECUTE DB_GD1C2026.migrar_propuestas;
-    EXECUTE DB_GD1C2026.migrar_propuestas_vuelo;
-    EXECUTE DB_GD1C2026.migrar_propuestas_habitacion;
-    EXECUTE DB_GD1C2026.migrar_propuestas_hospedaje;
     EXECUTE DB_GD1C2026.migrar_ventas;
+    EXECUTE DB_GD1C2026.migrar_alianzas;
+    EXECUTE DB_GD1C2026.migrar_aerolineas;
+    EXECUTE DB_GD1C2026.migrar_aeropuertos;
+    EXECUTE DB_GD1C2026.migrar_vuelos_disponibles;
+    EXECUTE DB_GD1C2026.migrar_propuestas_vuelo;
     EXECUTE DB_GD1C2026.migrar_vuelos;
     EXECUTE DB_GD1C2026.migrar_vuelos_por_venta;
-    EXECUTE DB_GD1C2026.migrar_hospedajes;
-    EXECUTE DB_GD1C2026.migrar_hospedajes_por_venta;
+    EXECUTE DB_GD1C2026.migrar_proveedores;
+    EXECUTE DB_GD1C2026.migrar_excursiones_disponibles;
     EXECUTE DB_GD1C2026.migrar_excursiones;
     EXECUTE DB_GD1C2026.migrar_excursiones_por_venta;
+
+    BEGIN TRANSACTION
+
+    EXECUTE DB_GD1C2026.migrar_hospedajes_disponibles;
+    SELECT * FROM DB_GD1C2026.hospedajes_disponibles;
+
+    ROLLBACK TRANSACTION
+
+
+    EXECUTE DB_GD1C2026.migrar_hospedajes;
+    EXECUTE DB_GD1C2026.migrar_hospedajes_por_venta;
+    EXECUTE DB_GD1C2026.migrar_propuestas_hospedaje;
+
+    EXECUTE DB_GD1C2026.migrar_habitaciones_disponibles;
+    EXECUTE DB_GD1C2026.migrar_propuestas_habitacion;
+
+
 
 COMMIT TRANSACTION;
