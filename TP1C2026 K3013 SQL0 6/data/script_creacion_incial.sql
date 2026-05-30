@@ -1082,28 +1082,21 @@ GO
 /* ---- propuestas_hospedaje ---- */
 CREATE PROCEDURE DB_GD1C2026.migrar_propuestas_hospedaje AS
 BEGIN
-    INSERT INTO DB_GD1C2026.propuestas_hospedaje (
-        codigo_propuesta_hospedaje, codigo_propuesta, codigo_cliente,
-        codigo_hospedaje_disponible, fecha_desde, fecha_hasta, cantidad_dias, subtotal
-    )
-    SELECT
-        ROW_NUMBER() OVER (ORDER BY hd.codigo_hospedaje) AS codigo_propuesta_hospedaje,
-        m.Propuesta_Nro_Propuesta   AS codigo_propuesta,
-        cl.codigo_cliente,
-        hd.codigo_hospedaje         AS codigo_hospedaje_disponible,
-        m.Detalle_Propuesta_Hospedaje_Fecha_Desde AS fecha_desde,
-        m.Detalle_Propuesta_Hospedaje_Fecha_Hasta AS fecha_hasta,
-        DATEDIFF(DAY,
-            m.Detalle_Propuesta_Hospedaje_Fecha_Desde,
-            m.Detalle_Propuesta_Hospedaje_Fecha_Hasta) AS cantidad_dias,
-        m.Detalle_Propuesta_Hospedaje_Subtotal AS subtotal
-    FROM gd_esquema.Maestra m
-    JOIN DB_GD1C2026.clientes cl ON cl.dni = m.Cliente_Dni
-    JOIN DB_GD1C2026.hospedajes_disponibles hd ON hd.nombre = m.Hospedaje_Nombre
-    JOIN DB_GD1C2026.habitaciones_disponibles hab ON hab.codigo_hospedaje = hd.codigo_hospedaje
-    JOIN DB_GD1C2026.propuestas_habitacion ph ON ph.codigo_habitacion_disponible = hab.numero_habitacion
-    WHERE m.Propuesta_Nro_Propuesta IS NOT NULL
-      AND m.Detalle_Propuesta_Hospedaje_Fecha_Desde IS NOT NULL;
+    INSERT INTO DB_GD1C2026.propuestas_hospedaje (codigo_propuesta_hospedaje, codigo_propuesta, codigo_cliente,
+                                    codigo_hospedaje_disponible, fecha_desde, fecha_hasta, cantidad_dias, subtotal)
+    SELECT ROW_NUMBER() OVER (ORDER BY codigo_propuesta, codigo_hospedaje) AS codigo_propuesta_hospedaje,
+           codigo_propuesta, codigo_cliente, codigo_hospedaje, fecha_desde, fecha_hasta, cantidad_dias, subtotal
+    FROM (
+        SELECT DISTINCT m.Propuesta_Nro_Propuesta AS codigo_propuesta, cl.codigo_cliente, hd.codigo_hospedaje,
+               m.Detalle_Propuesta_Hospedaje_Fecha_Desde AS fecha_desde,
+               m.Detalle_Propuesta_Hospedaje_Fecha_Hasta AS fecha_hasta,
+               DATEDIFF(DAY, m.Detalle_Propuesta_Hospedaje_Fecha_Desde, m.Detalle_Propuesta_Hospedaje_Fecha_Hasta) AS cantidad_dias,
+               m.Detalle_Propuesta_Hospedaje_Subtotal AS subtotal
+        FROM gd_esquema.Maestra m
+        JOIN DB_GD1C2026.clientes cl ON cl.dni = m.Cliente_Dni
+        JOIN DB_GD1C2026.hospedajes_disponibles hd ON hd.nombre = m.Hospedaje_Nombre
+        WHERE m.Propuesta_Nro_Propuesta IS NOT NULL AND m.Detalle_Propuesta_Hospedaje_Fecha_Desde IS NOT NULL
+    ) x;
 END;
 GO
 
@@ -1260,7 +1253,6 @@ BEGIN
 END;
 GO
 
-
 EXECUTE DB_GD1C2026.migrar_paises;
 EXECUTE DB_GD1C2026.migrar_provincias;
 EXECUTE DB_GD1C2026.migrar_localidades;
@@ -1295,5 +1287,3 @@ EXECUTE DB_GD1C2026.migrar_hospedajes_por_venta;
 EXECUTE DB_GD1C2026.migrar_propuestas_hospedaje;
 EXECUTE DB_GD1C2026.migrar_habitaciones_disponibles;
 EXECUTE DB_GD1C2026.migrar_propuestas_habitacion;
-SELECT * FROM DB_GD1C2026.propuestas_hospedaje;
-SELECT * FROM DB_GD1C2026.propuestas_habitacion;
