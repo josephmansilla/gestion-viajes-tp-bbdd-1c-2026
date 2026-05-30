@@ -1,6 +1,3 @@
-/* =========================================================
-= = = = = = = =  0) LIMPIEZA / PREP DEL ESQUEMA  = = = = = =
-========================================================= */
 USE GD1C2026
 GO
 
@@ -76,16 +73,14 @@ IF OBJECT_ID('DB_GD1C2026.provincias',                        'U') IS NOT NULL D
 IF OBJECT_ID('DB_GD1C2026.paises',                            'U') IS NOT NULL DROP TABLE DB_GD1C2026.paises;
 GO
 
-/* ---------- DROP y RECREAR SCHEMA ---------- */
+
 IF SCHEMA_ID('DB_GD1C2026') IS NULL
 BEGIN
     EXEC('CREATE SCHEMA DB_GD1C2026;');
 END
 GO
 
-/* =========================================================
-= = = = = = =  1) GEOGRAF�A: PAISES, PROVINCIAS, LOC.  = = =
-========================================================= */
+/* -- COMIENZO TABLAS -- */
 
 CREATE TABLE DB_GD1C2026.paises (
     codigo_pais BIGINT          NOT NULL,
@@ -127,9 +122,7 @@ CREATE TABLE DB_GD1C2026.ciudades (
 );
 GO
 
-/* =========================================================
-= = = = = = =  2) ACTORES: AGENCIAS, AGENTES, CLIENTES  = =
-========================================================= */
+/* --- AGENCIAS AGENTES  CLIENTES --- */
 
 CREATE TABLE DB_GD1C2026.agencias (
     numero_agencia      BIGINT          NOT NULL,
@@ -178,9 +171,7 @@ CREATE TABLE DB_GD1C2026.clientes (
 );
 GO
 
-/* =========================================================
-= = = = = = = = = =  3) ENCUESTAS Y VALORACIONES  = = = = =
-========================================================= */
+/* --- ENCUESTAS Y VALORACIONES --- */
 
 CREATE TABLE DB_GD1C2026.aspectos (
     codigo_aspecto  BIGINT          NOT NULL,
@@ -211,9 +202,7 @@ CREATE TABLE DB_GD1C2026.valoraciones (
 );
 GO
 
-/* =========================================================
-= = = = = = =  4) SOLICITUDES DE COTIZACI�N  = = = = = = =
-========================================================= */
+/* -- Solicitudes de cotizacion -- */
 
 CREATE TABLE DB_GD1C2026.solicitudes_cotizacion (
     numero_solicitud            BIGINT          NOT NULL,
@@ -250,10 +239,7 @@ CREATE TABLE DB_GD1C2026.detalle_solicitud_ciudades (
 );
 GO
 
-/* =========================================================
-= = = = = = = =  5) CAT�LOGOS SIMPLES  = = = = = = = = = = =
-= (estado_propuesta, canal_venta, medio_pago, alianzas)    =
-========================================================= */
+/* ENUMS */
 
 CREATE TABLE DB_GD1C2026.estado_propuesta (
     estado  NVARCHAR(50) NOT NULL,
@@ -273,9 +259,7 @@ CREATE TABLE DB_GD1C2026.medio_pago (
 );
 GO
 
-/* =========================================================
-= = = = = = = = = = = 6) PROPUESTAS  = = = = = = = = = = =
-========================================================= */
+/* PROPUESTAS */
 
 CREATE TABLE DB_GD1C2026.propuestas (
     codigo_propuesta            BIGINT          NOT NULL,
@@ -302,9 +286,7 @@ CREATE TABLE DB_GD1C2026.propuestas (
 );
 GO
 
-/* =========================================================
-= = = = = = = = = = = 7) VENTAS  = = = = = = = = = = = = =
-========================================================= */
+/* -- VENTAS -- */
 
 CREATE TABLE DB_GD1C2026.ventas (
     numero_venta        BIGINT          NOT NULL,
@@ -338,9 +320,7 @@ CREATE TABLE DB_GD1C2026.ventas (
 );
 GO
 
-/* =========================================================
-= = = = =  8) HOSPEDAJES Y HABITACIONES = = = = =
-========================================================= */
+/* -- HOSPEDAJES Y HABITACIONES --  */
 
 CREATE TABLE DB_GD1C2026.hospedajes_disponibles (
     codigo_hospedaje        BIGINT          NOT NULL,
@@ -427,9 +407,7 @@ CREATE TABLE DB_GD1C2026.propuestas_habitacion (
 );
 GO
 
-/* =========================================================
-= = = = = = =  9) AEROL�NEAS Y AEROPUERTOS  = = = = = = = =
-========================================================= */
+/* -- ALIANZAS, AEROLINEAS, AEROPUERTOS -- */
 
 CREATE TABLE DB_GD1C2026.alianzas (
     nombre_alianza  NVARCHAR(255) NOT NULL,
@@ -460,9 +438,7 @@ CREATE TABLE DB_GD1C2026.aeropuertos (
 );
 GO
 
-/* =========================================================
-= = = = = = = = 10) VUELOS = = = = = = = =
-========================================================= */
+/** -- VUELOS -- **/
 
 
 CREATE TABLE DB_GD1C2026.vuelos_disponibles (
@@ -529,9 +505,7 @@ CREATE TABLE DB_GD1C2026.vuelos_por_venta (
 );
 GO
 
-/* =========================================================
-= = = = = = = = = =  11) PROVEEDORES  = = = = = = = = = = = =
-========================================================= */
+/* -- PROVEEDORES -- */
 
 CREATE TABLE DB_GD1C2026.proveedores (
     numero_proveedor    BIGINT          NOT NULL,
@@ -542,9 +516,7 @@ CREATE TABLE DB_GD1C2026.proveedores (
 );
 GO
 
-/* =========================================================
-= = = = = = = =  12) EXCURSIONES DISPONIBLES  = = = = = = = =
-========================================================= */
+/* -- EXCURSIONES -- */
 
 CREATE TABLE DB_GD1C2026.excursiones_disponibles (
     codigo_excursion_disponibles    BIGINT          NOT NULL,
@@ -559,11 +531,6 @@ CREATE TABLE DB_GD1C2026.excursiones_disponibles (
         REFERENCES DB_GD1C2026.proveedores (numero_proveedor)
 );
 GO
-
-/* =========================================================
-= = = = = = =  13) DETALLE DE VENTA: VUELOS, HOSPEDAJES,  =
-=                  EXCURSIONES Y TABLAS PUENTE  = = = = = =
-========================================================= */
 
 CREATE TABLE DB_GD1C2026.excursiones (
     codigo_excursion                BIGINT          NOT NULL,
@@ -589,11 +556,9 @@ CREATE TABLE DB_GD1C2026.excursiones_por_venta (
 );
 GO
 
-/* =========================================================
-= = = = = = = = = = = PROCEDURES DE MIGRACI�N  = = = = = = =
-========================================================= */
+/*--Procedures--*/
 
-/* ---- pa�ses ---- */
+/* ---- paises ---- */
 CREATE PROCEDURE DB_GD1C2026.migrar_paises AS
 BEGIN
     -- Inserta todos los pa�ses �nicos referenciados en la tabla maestra.
@@ -656,9 +621,6 @@ CREATE PROCEDURE DB_GD1C2026.migrar_ciudades AS
 BEGIN
     DECLARE @offset BIGINT;
 
-    -- Paso 1: Para las ciudades de aeropuertos y hospedajes necesitamos localidades.
-    -- Creamos localidades sint�ticas para cada ciudad �nica que no existe a�n en localidades.
-    -- Usamos la primera provincia del pa�s correspondiente como provincia contenedora.
     SET @offset = ISNULL((SELECT MAX(codigo_localidad) FROM DB_GD1C2026.localidades), 0);
 
     INSERT INTO DB_GD1C2026.localidades (codigo_localidad, codigo_provincia, nombre)
@@ -686,7 +648,6 @@ BEGIN
         SELECT 1 FROM DB_GD1C2026.localidades l WHERE l.nombre = src.ciudad
     );
 
-    -- Paso 2: Insertar ciudades mapeando a pa�s y localidad.
     INSERT INTO DB_GD1C2026.ciudades (codigo_ciudad, codigo_pais, codigo_localidad, nombre)
     SELECT
         ROW_NUMBER() OVER (ORDER BY src.ciudad, src.pais) AS codigo_ciudad,
@@ -881,38 +842,30 @@ GO
 /* ---- hospedajes_disponibles ---- */
 CREATE PROCEDURE DB_GD1C2026.migrar_hospedajes_disponibles AS
 BEGIN
-    INSERT INTO DB_GD1C2026.hospedajes_disponibles (
-        codigo_hospedaje, codigo_ciudad,
-        nombre, direccion, incluye_desayuno,
-        horario_check_in, horario_check_out
-    )
-    SELECT DISTINCT
-        ROW_NUMBER() OVER (ORDER BY m.Hospedaje_Nombre, m.Hospedaje_Ciudad) AS codigo_hospedaje,
-        c.codigo_ciudad,
-        m.Hospedaje_Nombre          AS nombre,
-        m.Hospedaje_Direccion       AS direccion,
-        m.Hospedaje_Incluye_Desayuno AS incluye_desayuno,
-        m.Hospedaje_Check_In        AS horario_check_in,
-        m.Hospedaje_Check_Out       AS horario_check_out
-    FROM gd_esquema.Maestra m
-    JOIN DB_GD1C2026.ciudades c ON c.nombre = m.Hospedaje_Ciudad
-    JOIN DB_GD1C2026.paises   p ON p.nombre = m.Hospedaje_Pais
-    WHERE m.Hospedaje_Nombre IS NOT NULL;
+    INSERT INTO DB_GD1C2026.hospedajes_disponibles (codigo_hospedaje, codigo_ciudad, nombre, direccion, incluye_desayuno, horario_check_in, horario_check_out)
+    SELECT ROW_NUMBER() OVER (ORDER BY nombre, codigo_ciudad) AS codigo_hospedaje, codigo_ciudad, nombre, direccion, incluye_desayuno, horario_check_in, horario_check_out
+    FROM (
+        SELECT DISTINCT c.codigo_ciudad, m.Hospedaje_Nombre AS nombre, m.Hospedaje_Direccion AS direccion,
+               m.Hospedaje_Incluye_Desayuno AS incluye_desayuno, m.Hospedaje_Check_In AS horario_check_in,
+               m.Hospedaje_Check_Out AS horario_check_out
+        FROM gd_esquema.Maestra m
+        JOIN DB_GD1C2026.ciudades c ON c.nombre = m.Hospedaje_Ciudad
+        JOIN DB_GD1C2026.paises p ON p.nombre = m.Hospedaje_Pais
+        WHERE m.Hospedaje_Nombre IS NOT NULL
+    ) x;
 END;
 GO
-
 /* ---- habitaciones_disponibles ---- */
 CREATE PROCEDURE DB_GD1C2026.migrar_habitaciones_disponibles AS
 BEGIN
     INSERT INTO DB_GD1C2026.habitaciones_disponibles (numero_habitacion, codigo_hospedaje, precio_noche, descripcion)
-    SELECT DISTINCT
-        ROW_NUMBER() OVER (ORDER BY m.Habitacion_Nombre, m.Hospedaje_Nombre) AS numero_habitacion,
-        hd.codigo_hospedaje,
-        m.Habitacion_Precio_Noche   AS precio_noche,
-        m.Habitacion_Descripcion    AS descripcion
-    FROM gd_esquema.Maestra m
-    JOIN DB_GD1C2026.hospedajes_disponibles hd ON hd.nombre = m.Hospedaje_Nombre
-    WHERE m.Habitacion_Nombre IS NOT NULL;
+    SELECT ROW_NUMBER() OVER (ORDER BY nombre, codigo_hospedaje) AS numero_habitacion, codigo_hospedaje, precio_noche, descripcion
+    FROM (
+        SELECT DISTINCT hd.codigo_hospedaje, m.Habitacion_Precio_Noche AS precio_noche, m.Habitacion_Descripcion AS descripcion, m.Habitacion_Nombre AS nombre
+        FROM gd_esquema.Maestra m
+        JOIN DB_GD1C2026.hospedajes_disponibles hd ON hd.nombre = m.Hospedaje_Nombre
+        WHERE m.Habitacion_Nombre IS NOT NULL
+    ) x;
 END;
 GO
 
@@ -1114,18 +1067,13 @@ GO
 CREATE PROCEDURE DB_GD1C2026.migrar_propuestas_habitacion AS
 BEGIN
     INSERT INTO DB_GD1C2026.propuestas_habitacion (codigo_propuesta_habitacion, codigo_habitacion_disponible, codigo_propuesta_hospedaje, cantidad)
-    SELECT ROW_NUMBER() OVER (ORDER BY numero_habitacion, codigo_propuesta_hospedaje), numero_habitacion, codigo_propuesta_hospedaje, cantidad
+    SELECT ROW_NUMBER() OVER (ORDER BY numero_habitacion), numero_habitacion, codigo_propuesta_hospedaje, cantidad
     FROM (
         SELECT DISTINCT hab.numero_habitacion, ph.codigo_propuesta_hospedaje, m.Detalle_Propuesta_Hospedaje_Cant AS cantidad
         FROM gd_esquema.Maestra m
         JOIN DB_GD1C2026.hospedajes_disponibles hd ON hd.nombre = m.Hospedaje_Nombre
         JOIN DB_GD1C2026.propuestas_hospedaje ph ON ph.codigo_propuesta = m.Propuesta_Nro_Propuesta
-                                                AND ph.codigo_hospedaje_disponible = hd.codigo_hospedaje
-                                                AND ph.fecha_desde = m.Detalle_Propuesta_Hospedaje_Fecha_Desde
-                                                AND ph.fecha_hasta = m.Detalle_Propuesta_Hospedaje_Fecha_Hasta
         JOIN DB_GD1C2026.habitaciones_disponibles hab ON hab.codigo_hospedaje = hd.codigo_hospedaje
-                                                     AND hab.descripcion = m.Habitacion_Descripcion
-                                                     AND hab.precio_noche = m.Habitacion_Precio_Noche
         WHERE m.Propuesta_Nro_Propuesta IS NOT NULL AND m.Detalle_Propuesta_Hospedaje_Cant IS NOT NULL
     ) x;
 END;
@@ -1139,7 +1087,7 @@ BEGIN
         codigo_hospedaje_disponible, fecha_desde, fecha_hasta, cantidad_dias, subtotal
     )
     SELECT
-        ROW_NUMBER() OVER (ORDER BY m.Propuesta_Nro_Propuesta, hd.codigo_hospedaje) AS codigo_propuesta_hospedaje,
+        ROW_NUMBER() OVER (ORDER BY hd.codigo_hospedaje) AS codigo_propuesta_hospedaje,
         m.Propuesta_Nro_Propuesta   AS codigo_propuesta,
         cl.codigo_cliente,
         hd.codigo_hospedaje         AS codigo_hospedaje_disponible,
@@ -1236,17 +1184,18 @@ GO
 CREATE PROCEDURE DB_GD1C2026.migrar_hospedajes AS
 BEGIN
     INSERT INTO DB_GD1C2026.hospedajes (
-        codigo_hospedaje, codigo_hospedaje_disponible,
-        fecha_desde, fecha_hasta, cantidad,
-        precio_unitario, codigo_reserva, subtotal
+        codigo_hospedaje, codigo_hospedaje_disponible, fecha_desde, fecha_hasta,
+        cantidad, precio_unitario, cantidad_dias_aproximados, codigo_reserva, subtotal
     )
     SELECT DISTINCT
         ROW_NUMBER() OVER (ORDER BY m.Venta_Nro_Venta, hd.codigo_hospedaje) AS codigo_hospedaje,
-        hd.codigo_hospedaje          AS codigo_hospedaje_disponible,
-        m.Detalle_Venta_Hospedaje_Fecha_Desde AS fecha_desde,
-        m.Detalle_Venta_Hospedaje_Fecha_Hasta AS fecha_hasta,
+        hd.codigo_hospedaje                         AS codigo_hospedaje_disponible,
+        m.Detalle_Venta_Hospedaje_Fecha_Desde       AS fecha_desde,
+        m.Detalle_Venta_Hospedaje_Fecha_Hasta       AS fecha_hasta,
         m.Detalle_Venta_Hospedaje_Cantidad          AS cantidad,
         m.Detalle_Venta_Hospedaje_Precio_Unitario   AS precio_unitario,
+        DATEDIFF(DAY, m.Detalle_Venta_Hospedaje_Fecha_Desde, m.Detalle_Venta_Hospedaje_Fecha_Hasta)
+                                                    AS cantidad_dias_aproximados,
         m.Detalle_Venta_Hospedaje_Cod_Reserva       AS codigo_reserva,
         m.Detalle_Venta_Hospedaje_Subtotal          AS subtotal
     FROM gd_esquema.Maestra m
@@ -1311,55 +1260,40 @@ BEGIN
 END;
 GO
 
-/* =========================================================
-= = = = = = = = = = = EJECUCI�N DE MIGRACI�N = = = = = = = =
-========================================================= */
 
-
-    EXECUTE DB_GD1C2026.migrar_paises;
-    EXECUTE DB_GD1C2026.migrar_provincias;
-    EXECUTE DB_GD1C2026.migrar_localidades;
-    EXECUTE DB_GD1C2026.migrar_ciudades;
-    EXECUTE DB_GD1C2026.migrar_agencias;
-    EXECUTE DB_GD1C2026.migrar_agentes;
-    EXECUTE DB_GD1C2026.migrar_clientes;
-    EXECUTE DB_GD1C2026.migrar_encuestas;
-    EXECUTE DB_GD1C2026.migrar_aspectos;
-    EXECUTE DB_GD1C2026.migrar_valoraciones;
-    EXECUTE DB_GD1C2026.migrar_solicitudes_cotizacion;
-    EXECUTE DB_GD1C2026.migrar_detalle_solicitud_ciudades;
-    EXECUTE DB_GD1C2026.migrar_canales_venta;
-    EXECUTE DB_GD1C2026.migrar_medios_pago;
-    EXECUTE DB_GD1C2026.migrar_estado_propuesta;
-    EXECUTE DB_GD1C2026.migrar_propuestas;
-    EXECUTE DB_GD1C2026.migrar_ventas;
-    EXECUTE DB_GD1C2026.migrar_alianzas;
-    EXECUTE DB_GD1C2026.migrar_aerolineas;
-    EXECUTE DB_GD1C2026.migrar_aeropuertos;
-    EXECUTE DB_GD1C2026.migrar_vuelos_disponibles;
-    EXECUTE DB_GD1C2026.migrar_propuestas_vuelo;
-    EXECUTE DB_GD1C2026.migrar_vuelos;
-    EXECUTE DB_GD1C2026.migrar_vuelos_por_venta;
-    EXECUTE DB_GD1C2026.migrar_proveedores;
-    EXECUTE DB_GD1C2026.migrar_excursiones_disponibles;
-    EXECUTE DB_GD1C2026.migrar_excursiones;
-    EXECUTE DB_GD1C2026.migrar_excursiones_por_venta;
-
-    BEGIN TRANSACTION
-
-    EXECUTE DB_GD1C2026.migrar_hospedajes_disponibles;
-    SELECT * FROM DB_GD1C2026.hospedajes_disponibles;
-
-    ROLLBACK TRANSACTION
-
-
-    EXECUTE DB_GD1C2026.migrar_hospedajes;
-    EXECUTE DB_GD1C2026.migrar_hospedajes_por_venta;
-    EXECUTE DB_GD1C2026.migrar_propuestas_hospedaje;
-
-    EXECUTE DB_GD1C2026.migrar_habitaciones_disponibles;
-    EXECUTE DB_GD1C2026.migrar_propuestas_habitacion;
-
-
-
-COMMIT TRANSACTION;
+EXECUTE DB_GD1C2026.migrar_paises;
+EXECUTE DB_GD1C2026.migrar_provincias;
+EXECUTE DB_GD1C2026.migrar_localidades;
+EXECUTE DB_GD1C2026.migrar_ciudades;
+EXECUTE DB_GD1C2026.migrar_agencias;
+EXECUTE DB_GD1C2026.migrar_agentes;
+EXECUTE DB_GD1C2026.migrar_clientes;
+EXECUTE DB_GD1C2026.migrar_encuestas;
+EXECUTE DB_GD1C2026.migrar_aspectos;
+EXECUTE DB_GD1C2026.migrar_valoraciones;
+EXECUTE DB_GD1C2026.migrar_solicitudes_cotizacion;
+EXECUTE DB_GD1C2026.migrar_detalle_solicitud_ciudades;
+EXECUTE DB_GD1C2026.migrar_canales_venta;
+EXECUTE DB_GD1C2026.migrar_medios_pago;
+EXECUTE DB_GD1C2026.migrar_estado_propuesta;
+EXECUTE DB_GD1C2026.migrar_propuestas;
+EXECUTE DB_GD1C2026.migrar_ventas;
+EXECUTE DB_GD1C2026.migrar_alianzas;
+EXECUTE DB_GD1C2026.migrar_aerolineas;
+EXECUTE DB_GD1C2026.migrar_aeropuertos;
+EXECUTE DB_GD1C2026.migrar_vuelos_disponibles;
+EXECUTE DB_GD1C2026.migrar_propuestas_vuelo;
+EXECUTE DB_GD1C2026.migrar_vuelos;
+EXECUTE DB_GD1C2026.migrar_vuelos_por_venta;
+EXECUTE DB_GD1C2026.migrar_proveedores;
+EXECUTE DB_GD1C2026.migrar_excursiones_disponibles;
+EXECUTE DB_GD1C2026.migrar_excursiones;
+EXECUTE DB_GD1C2026.migrar_excursiones_por_venta;
+EXECUTE DB_GD1C2026.migrar_hospedajes_disponibles;
+EXECUTE DB_GD1C2026.migrar_hospedajes;
+EXECUTE DB_GD1C2026.migrar_hospedajes_por_venta;
+EXECUTE DB_GD1C2026.migrar_propuestas_hospedaje;
+EXECUTE DB_GD1C2026.migrar_habitaciones_disponibles;
+EXECUTE DB_GD1C2026.migrar_propuestas_habitacion;
+SELECT * FROM DB_GD1C2026.propuestas_hospedaje;
+SELECT * FROM DB_GD1C2026.propuestas_habitacion;
