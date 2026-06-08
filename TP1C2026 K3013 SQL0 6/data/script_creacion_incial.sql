@@ -799,24 +799,24 @@ CREATE PROCEDURE SQL0.migrar_vuelos_disponibles AS
 BEGIN
     INSERT INTO SQL0.vuelos_disponibles (
         codigo_vuelos_disponibles, codigo_aerolinea, codigo_aeropuerto_salida,
-        codigo_aeropuerto_llegada, fecha_salida, fecha_llegada, horario_salida, horario_llegada,
-        duracion, incluye_carry, incluye_valija, precio_unitario
+        codigo_aeropuerto_llegada, fecha_salida, fecha_llegada, horario_salida,
+        horario_llegada, duracion, incluye_carry, incluye_valija, precio_unitario
     )
-    SELECT DISTINCT
-        ROW_NUMBER() OVER (ORDER BY m.Aerolinea_Codigo) AS codigo_vuelos_disponibles,
-        m.Aerolinea_Codigo          AS codigo_aerolinea,
-        m.Aeropuerto_Salida_Codigo  AS codigo_aeropuerto_salida,
-        m.Aeropuerto_Llegada_Codigo AS codigo_aeropuerto_llegada,
-        m.Vuelo_Fecha_Salida        AS fecha_salida,
-        m.Vuelo_Fecha_Llegada       AS fecha_llegada,
-        m.Vuelo_Horario_Salida      AS horario_salida,
-        m.Vuelo_Horario_Llegada     AS horario_llegada,
-        m.Vuelo_Duracion            AS duracion,
-        m.Vuelo_Incluye_Carry       AS incluye_carry,
-        m.Vuelo_Incluye_Valija      AS incluye_valija,
-        m.Vuelo_Precio              AS precio_unitario
-    FROM gd_esquema.Maestra m
-    WHERE m.Aerolinea_Codigo IS NOT NULL AND m.Vuelo_Fecha_Salida IS NOT NULL;
+    SELECT
+        ROW_NUMBER() OVER (ORDER BY Aerolinea_Codigo, Aeropuerto_Salida_Codigo,
+                           Aeropuerto_Llegada_Codigo, Vuelo_Fecha_Salida, Vuelo_Horario_Salida),
+        Aerolinea_Codigo, Aeropuerto_Salida_Codigo, Aeropuerto_Llegada_Codigo,
+        Vuelo_Fecha_Salida, Vuelo_Fecha_Llegada, Vuelo_Horario_Salida, Vuelo_Horario_Llegada,
+        Vuelo_Duracion, Vuelo_Incluye_Carry, Vuelo_Incluye_Valija, Vuelo_Precio
+    FROM (
+        SELECT DISTINCT
+            m.Aerolinea_Codigo, m.Aeropuerto_Salida_Codigo, m.Aeropuerto_Llegada_Codigo,
+            m.Vuelo_Fecha_Salida, m.Vuelo_Fecha_Llegada, m.Vuelo_Horario_Salida,
+            m.Vuelo_Horario_Llegada, m.Vuelo_Duracion, m.Vuelo_Incluye_Carry,
+            m.Vuelo_Incluye_Valija, m.Vuelo_Precio
+        FROM gd_esquema.Maestra m
+        WHERE m.Aerolinea_Codigo IS NOT NULL AND m.Vuelo_Fecha_Salida IS NOT NULL
+    ) x;
 END;
 GO
 
@@ -1084,16 +1084,24 @@ BEGIN
         m.Detalle_Propuesta_Vuelo_Cant_Pasajes  AS cantidad_pasajes,
         m.Detalle_Propuesta_Vuelo_Subtotal      AS subtotal
     FROM gd_esquema.Maestra m
-    JOIN SQL0.clientes cl ON cl.dni = m.Cliente_Dni
-    JOIN SQL0.vuelos_disponibles vd
-        ON vd.codigo_aerolinea = m.Aerolinea_Codigo
-        AND vd.fecha_salida    = m.Vuelo_Fecha_Salida
-        AND vd.precio_unitario = m.Vuelo_Precio
+        JOIN SQL0.clientes cl 
+                ON cl.dni = m.Cliente_Dni
+        JOIN SQL0.vuelos_disponibles vd
+                ON  vd.codigo_aerolinea           = m.Aerolinea_Codigo
+                AND vd.codigo_aeropuerto_salida   = m.Aeropuerto_Salida_Codigo
+                AND vd.codigo_aeropuerto_llegada  = m.Aeropuerto_Llegada_Codigo
+                AND vd.fecha_salida               = m.Vuelo_Fecha_Salida
+                AND vd.fecha_llegada              = m.Vuelo_Fecha_Llegada
+                AND vd.horario_salida             = m.Vuelo_Horario_Salida
+                AND vd.horario_llegada            = m.Vuelo_Horario_Llegada
+                AND vd.precio_unitario            = m.Vuelo_Precio
+                AND vd.incluye_carry              = m.Vuelo_Incluye_Carry
+                AND vd.incluye_valija             = m.Vuelo_Incluye_Valija
     WHERE m.Propuesta_Nro_Propuesta IS NOT NULL
       AND m.Detalle_Propuesta_Vuelo_Cant_Pasajes IS NOT NULL;
 END;
 GO
-
+    
 /* ---- propuestas_habitacion ---- */
 CREATE PROCEDURE SQL0.migrar_propuestas_habitacion AS
 BEGIN
@@ -1179,10 +1187,13 @@ BEGIN
         m.Detalle_Venta_Vuelo_Cod_Reserva       AS codigo_reserva_operacion,
         m.Detalle_Venta_Vuelo_Subtotal          AS subtotal
     FROM gd_esquema.Maestra m
-    JOIN SQL0.vuelos_disponibles vd
-        ON vd.codigo_aerolinea = m.Aerolinea_Codigo
-        AND vd.fecha_salida    = m.Vuelo_Fecha_Salida
-        AND vd.precio_unitario = m.Vuelo_Precio
+        JOIN SQL0.vuelos_disponibles vd
+                ON vd.codigo_aerolinea            = m.Aerolinea_Codigo
+                AND vd.fecha_salida               = m.Vuelo_Fecha_Salida
+                AND vd.fecha_llegada              = m.Vuelo_Fecha_Llegada
+                AND vd.codigo_aeropuerto_salida   = m.Aeropuerto_Salida_Codigo  
+                AND vd.codigo_aeropuerto_llegada  = m.Aeropuerto_Llegada_Codigo 
+                AND vd.precio_unitario            = m.Vuelo_Precio
     JOIN SQL0.ventas vnt
         ON m.Venta_Nro_Venta = vnt.numero_venta
     WHERE m.Venta_Nro_Venta IS NOT NULL
@@ -1275,3 +1286,8 @@ EXECUTE SQL0.migrar_propuestas_hospedaje;
 EXECUTE SQL0.migrar_habitaciones_disponibles;
 EXECUTE SQL0.migrar_propuestas_habitacion;
 EXECUTE SQL0.migrar_habitaciones_por_hospedaje;
+
+SELECT * FROM SQL0.propuestas_vuelo;
+SELECT * FROM SQL0.vuelos_por_venta;
+SELECT * FROM SQL0.vuelos_disponibles;
+
