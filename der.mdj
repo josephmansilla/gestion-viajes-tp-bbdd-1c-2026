@@ -17013,6 +17013,20 @@
 							"columnCompartment": {
 								"$ref": "AAAAAAGeejnTh2kcLc8="
 							}
+						},
+						{
+							"_type": "UMLNoteView",
+							"_id": "AAAAAAGeqOrm5aF8SOw=",
+							"_parent": {
+								"$ref": "AAAAAAGeeVMXjkx7fwc="
+							},
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"left": 808,
+							"top": 1416,
+							"width": 440,
+							"height": 104,
+							"text": "Para poder hacer el data warehouse, voy a necesitar: \n\nencuestas por argentes\nranking de aspectos de encuestas en un rango de tiempo\nventa promedio por cliente\nporcentaje de aceptación de propuestas por cuatrimestre\ncotizacion promedio por temporada\n"
 						}
 					]
 				},
