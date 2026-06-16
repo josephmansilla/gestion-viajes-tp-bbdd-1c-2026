@@ -1286,8 +1286,3 @@ EXECUTE SQL0.migrar_propuestas_hospedaje;
 EXECUTE SQL0.migrar_habitaciones_disponibles;
 EXECUTE SQL0.migrar_propuestas_habitacion;
 EXECUTE SQL0.migrar_habitaciones_por_hospedaje;
-
-SELECT * FROM SQL0.propuestas_vuelo;
-SELECT * FROM SQL0.vuelos_por_venta;
-SELECT * FROM SQL0.vuelos_disponibles;
-

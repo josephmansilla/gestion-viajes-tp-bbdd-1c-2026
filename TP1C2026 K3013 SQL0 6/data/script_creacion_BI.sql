@@ -1,3 +1,6 @@
+USE GD1C2026
+GO
+
 DROP TABLE IF EXISTS BI_canal_venta;
 DROP TABLE IF EXISTS BI_rangos_tiempo;
 DROP TABLE IF EXISTS BI_rangos_etario_cliente;
@@ -37,7 +40,9 @@ GO
 CREATE TABLE BI_temporadas (
 	id_temporada SMALLINT PRIMARY KEY IDENTITY(1,1),
 	nombre CHAR(25) NOT NULL CHECK (nombre IN (
-		'VERANO', 'OTONIO', 'INVIERNO', 'PRIMAVERA'))
+		'VERANO', 'OTONIO', 'INVIERNO', 'PRIMAVERA')),
+	mes_inicio INT NOT NULL,
+	mes_fin INT NOT NULL
 	-- (ENERO -> MARZO) (ABRIL -> JUNIO) (JULIO -> SEPTIEMBRE) (OCTUBRE -> DICIEMBRE)
 );
 GO
@@ -197,6 +202,7 @@ BEGIN
 	SELECT * FROM BI_rangos_tiempo;
 END;
 GO
+
 --10. Satisfacción promedio por agente: Puntaje promedio obtenido en las
 --encuestas, segmentado por rango etario del agente y mes.
 
