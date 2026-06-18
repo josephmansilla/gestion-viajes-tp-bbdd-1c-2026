@@ -1,3 +1,6 @@
+USE GD1C2026
+GO
+
 IF OBJECT_ID('SQL0.BI_dim_rangos_etario', 'U') IS NOT NULL DROP TABLE SQL0.BI_dim_rangos_etario;
 IF OBJECT_ID('SQL0.BI_dim_temporadas', 'U') IS NOT NULL DROP TABLE SQL0.BI_dim_temporadas;
 IF OBJECT_ID('SQL0.BI_dim_tipo_servicio', 'U') IS NOT NULL DROP TABLE SQL0.BI_dim_tipo_servicio;
@@ -352,46 +355,202 @@ GO
 ============================================
 */
 
-CREATE PROCEDURE SQL0.BI_migrar_dim_rangos_etario AS BEGIN RETURN; END;
+CREATE PROCEDURE SQL0.BI_migraciones_estaticas AS
+BEGIN
+    INSERT INTO SQL0.BI_dim_rangos_etario (descripcion, edad_desde, edad_hasta)
+    VALUES
+        -- Rangos de clientes
+        ('Menores de 25 años inclusive',    0,  25),
+        ('Entre 25 y 35 años inclusive',    26, 35),
+        ('Entre 35 y 50 años inclusive',    36, 50),
+        -- Rangos de agentes
+        ('Entre 25 y 35 años',              25, 35),
+        ('Entre 35 y 50 años',              36, 50),
+        -- Compartido
+        ('Mayores de 50 años',              51, NULL);
+
+    INSERT INTO SQL0.BI_dim_temporada (nombre, mes_inicio, mes_fin) 
+        VALUES ('Verano', 12, 2), ('Otoño', 3, 5), 
+               ('Invierno', 6, 8), ('Primavera', 9,11);
+
+    INSERT INTO SQL0.BI_dim_tipo_servicio (nombre) 
+        VALUES ('Venta Directa'), ('Propuesta a Medida');
+
+    INSERT INTO SQL0.BI_dim_estado_propuesta (estado)
+        VALUES ('Aceptado'), ('Rechazado');
+END;
 GO
 
-CREATE PROCEDURE SQL0.BI_migrar_dim_temporadas AS BEGIN RETURN; END;
+
+
+CREATE PROCEDURE SQL0.BI_migrar_dim_canal_venta AS 
+BEGIN 
+    INSERT INTO SQL0.BI_dim_canal_venta (nombre)
+    SELECT DISTINCT cv.nombre FROM SQL0.canal_venta cv;
+END;
 GO
 
-CREATE PROCEDURE SQL0.BI_migrar_dim_tipo_servicio AS BEGIN RETURN; END;
+CREATE PROCEDURE SQL0.BI_migrar_dim_aspecto AS 
+BEGIN  
+    INSERT INTO SQL0.BI_dim_aspecto (descripcion)
+    SELECT DISTINCT a.descripcion FROM SQL0.aspectos a;
+    SELECT * FROM SQL0.BI_dim_aspecto;
+END;
 GO
 
-CREATE PROCEDURE SQL0.BI_migrar_dim_canal_venta AS BEGIN RETURN; END;
+
+CREATE PROCEDURE SQL0.BI_migrar_dim_cliente AS
+BEGIN
+    INSERT INTO SQL0.BI_dim_cliente (id_cliente, nombre, apellido, dni, rango_edad)
+    SELECT  c.codigo_cliente, c.nombre, 
+            c.apellido, c.dni, dre.id_rango_etario
+    FROM SQL0.clientes c
+        INNER JOIN SQL0.BI_dim_rangos_etario dre
+            ON dre.descripcion = CASE
+                WHEN DATEDIFF(YEAR, c.fecha_nacimiento, GETDATE()) <= 25 THEN 'Menores de 25 años inclusive'
+                WHEN DATEDIFF(YEAR, c.fecha_nacimiento, GETDATE()) <= 35 THEN 'Entre 25 y 35 años inclusive'
+                WHEN DATEDIFF(YEAR, c.fecha_nacimiento, GETDATE()) <= 50 THEN 'Entre 35 y 50 años inclusive'
+                ELSE 'Mayores de 50 años'
+            END;
+END;
 GO
 
-CREATE PROCEDURE SQL0.BI_migrar_dim_estado_propuesta AS BEGIN RETURN; END;
+CREATE PROCEDURE SQL0.BI_migrar_dim_agente AS
+BEGIN
+    INSERT INTO SQL0.BI_dim_agente (id_agente, nombre, apellido, dni, rango_edad)
+    SELECT  a.legajo_agente, a.nombre,
+            a.apellido, a.dni, dre.id_rango_etario
+    FROM SQL0.agentes a
+        INNER JOIN SQL0.BI_dim_rangos_etario dre
+            ON dre.descripcion = CASE
+                WHEN DATEDIFF(YEAR, a.fecha_nacimiento, GETDATE()) <= 35 THEN 'Entre 25 y 35 años'
+                WHEN DATEDIFF(YEAR, a.fecha_nacimiento, GETDATE()) <= 50 THEN 'Entre 35 y 50 años'
+                WHEN DATEDIFF(YEAR, a.fecha_nacimiento, GETDATE()) >= 51 THEN 'Mayores de 50 años'
+                ELSE 'soy un error' -- revisar...
+            END;
+END;
 GO
 
-CREATE PROCEDURE SQL0.BI_migrar_dim_aspecto AS BEGIN RETURN; END;
+CREATE PROCEDURE SQL0.BI_migrar_dim_tiempo AS
+BEGIN
+
+    INSERT INTO SQL0.BI_dim_tiempo (fecha, anio, cuatrimestre, mes, nombre_mes)
+    SELECT DISTINCT
+        fechas.fecha, YEAR(fechas.fecha),
+        CASE
+            WHEN MONTH(fechas.fecha) BETWEEN 1 AND 4 THEN 1
+            WHEN MONTH(fechas.fecha) BETWEEN 5 AND 8 THEN 2
+            ELSE 3
+        END,
+        MONTH(fechas.fecha), DATENAME(MONTH, fechas.fecha)
+    FROM (
+        SELECT v.fecha_venta AS fecha
+        FROM SQL0.ventas v
+        UNION
+        SELECT p.fecha_emision AS fecha
+        FROM SQL0.propuestas p
+        UNION
+        SELECT e.fecha_realizado AS fecha
+        FROM SQL0.encuestas e
+        UNION
+        SELECT v.fecha FROM SQL0.solicitudes_cotizacion sc
+        CROSS APPLY(VALUES (sc.fecha_realizada), (sc.fecha_inicio_tentativa)) v(fecha)
+    ) fechas;
+END;
 GO
 
-CREATE PROCEDURE SQL0.BI_migrar_dim_valoracion AS BEGIN RETURN; END;
+CREATE PROCEDURE SQL0.BI_migrar_hechos_ventas
+AS
+BEGIN
+
+    INSERT INTO SQL0.BI_hechos_ventas(
+            id_cliente, id_canal_venta, 
+            id_tiempo_venta, id_tipo_servicio, importe_total)
+    SELECT
+        dc.id_cliente, dcv.id_canal_venta, dt.id_tiempo, dts.id_tipo_servicio, v.importe_total
+    FROM SQL0.ventas v
+        INNER JOIN SQL0.BI_dim_cliente dc
+            ON dc.id_cliente = v.codigo_cliente
+        INNER JOIN SQL0.BI_dim_canal_venta dcv
+            ON dcv.nombre = v.canal_venta
+        INNER JOIN SQL0.BI_dim_tiempo dt
+            ON dt.fecha = v.fecha_venta
+        INNER JOIN SQL0.BI_dim_tipo_servicio dts
+            ON dts.nombre = IIF(v.codigo_propuesta IS NULL, 'Venta Directa', 'Propuesta a Medida')
+
+END;
 GO
 
-CREATE PROCEDURE SQL0.BI_migrar_dim_cliente AS BEGIN RETURN; END;
+CREATE PROCEDURE SQL0.BI_migrar_hechos_propuestas
+AS
+BEGIN
+
+    INSERT INTO SQL0.BI_hechos_propuestas 
+        (id_agente, id_cliente, id_estado_propuesta, 
+        id_tiempo_propuesta,id_tiempo_cotizacion, 
+        importe_total, presupuesto_estimado)
+    SELECT
+        da.id_agente, dc.id_cliente, dep.id_estado_propuesta,
+        dtp.id_tiempo, dtc.id_tiempo, p.importe_total, sc.presupuesto_estimado
+    FROM SQL0.propuestas p
+        INNER JOIN SQL0.BI_dim_cliente dc
+            ON dc.id_cliente = p.codigo_cliente
+        INNER JOIN SQL0.BI_dim_agente da
+            ON da.id_agente = p.codigo_agente
+        INNER JOIN SQL0.BI_dim_estado_propuesta dep
+            ON dep.estado = p.estado_propuesta
+        INNER JOIN SQL0.BI_dim_tiempo dtp
+            ON dtp.fecha = p.fecha_emision
+        INNER JOIN SQL0.solicitudes_cotizacion sc
+            ON sc.numero_solicitud = p.codigo_solicitud_cotizacion
+        INNER JOIN SQL0.BI_dim_tiempo dtc
+            ON dtc.fecha = sc.fecha_realizada;
+END;
 GO
 
-CREATE PROCEDURE SQL0.BI_migrar_dim_agente AS BEGIN RETURN; END;
+CREATE PROCEDURE SQL0.BI_migrar_hechos_cotizaciones AS
+BEGIN
+    INSERT INTO SQL0.BI_hechos_cotizaciones
+            (id_cliente, id_agente, id_temporada,
+             id_tiempo_cotizacion, id_tiempo_inicio, importe_total)
+    SELECT  dc.id_cliente, da.id_agente,
+            dtmp.id_temporada, dtc.id_tiempo,
+            dti.id_tiempo, sc.presupuesto_estimado
+    FROM SQL0.solicitudes_cotizacion sc
+        INNER JOIN SQL0.BI_dim_cliente dc
+            ON dc.id_cliente = sc.codigo_cliente
+        INNER JOIN SQL0.BI_dim_agente da
+            ON da.id_agente = sc.codigo_agente
+        INNER JOIN SQL0.BI_dim_tiempo dtc
+            ON dtc.fecha = sc.fecha_realizada
+        INNER JOIN SQL0.BI_dim_tiempo dti
+            ON dti.fecha = sc.fecha_inicio_tentativa
+        INNER JOIN SQL0.BI_dim_temporada dtmp
+            ON (MONTH(sc.fecha_inicio_tentativa) IN (12, 1, 2)  AND dtmp.nombre = 'Verano'   )
+            OR (MONTH(sc.fecha_inicio_tentativa) IN (3, 4, 5)   AND dtmp.nombre = 'Otoño'    )
+            OR (MONTH(sc.fecha_inicio_tentativa) IN (6, 7, 8)   AND dtmp.nombre = 'Invierno' )
+            OR (MONTH(sc.fecha_inicio_tentativa) IN (9, 10, 11) AND dtmp.nombre = 'Primavera');
+END;
 GO
 
-CREATE PROCEDURE SQL0.BI_migrar_dim_tiempo AS BEGIN RETURN; END;
-GO
-
-CREATE PROCEDURE SQL0.BI_migrar_hechos_ventas AS BEGIN RETURN; END;
-GO
-
-CREATE PROCEDURE SQL0.BI_migrar_hechos_propuestas AS BEGIN RETURN; END;
-GO
-
-CREATE PROCEDURE SQL0.BI_migrar_hechos_cotizaciones AS BEGIN RETURN; END;
-GO
-
-CREATE PROCEDURE SQL0.BI_migrar_hechos_encuestas AS BEGIN RETURN; END;
+CREATE PROCEDURE SQL0.BI_migrar_hechos_encuestas AS
+BEGIN
+    INSERT INTO SQL0.BI_hechos_encuestas
+            (id_agente, id_aspecto, id_tiempo, puntaje)
+    SELECT  da.id_agente, dasp.id_aspecto,
+            dt.id_tiempo, v.puntaje
+    FROM SQL0.valoraciones v
+        INNER JOIN SQL0.encuestas e
+            ON e.codigo_encuesta = v.codigo_encuesta
+        INNER JOIN SQL0.aspectos a
+            ON a.codigo_aspecto = v.codigo_aspecto
+        INNER JOIN SQL0.BI_dim_agente da
+            ON da.id_agente = e.codigo_agente
+        INNER JOIN SQL0.BI_dim_tiempo dt
+            ON dt.fecha = e.fecha_realizado
+        INNER JOIN SQL0.BI_dim_aspecto dasp
+            ON dasp.descripcion = a.descripcion;
+END;
 GO
 
 /*
@@ -400,13 +559,9 @@ GO
 ============================================
 */
 
-EXEC SQL0.BI_migrar_dim_rangos_etario;
-EXEC SQL0.BI_migrar_dim_temporadas;
-EXEC SQL0.BI_migrar_dim_tipo_servicio;
+EXEC SQL0.BI_migraciones_estaticas;
 EXEC SQL0.BI_migrar_dim_canal_venta;
-EXEC SQL0.BI_migrar_dim_estado_propuesta;
 EXEC SQL0.BI_migrar_dim_aspecto;
-EXEC SQL0.BI_migrar_dim_valoracion;
 EXEC SQL0.BI_migrar_dim_cliente;
 EXEC SQL0.BI_migrar_dim_agente;
 EXEC SQL0.BI_migrar_dim_tiempo;
