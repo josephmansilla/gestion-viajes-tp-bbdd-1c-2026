@@ -1,20 +1,6 @@
 USE GD1C2026
 GO
 
-IF OBJECT_ID('SQL0.BI_dim_rangos_etario', 'U') IS NOT NULL DROP TABLE SQL0.BI_dim_rangos_etario;
-IF OBJECT_ID('SQL0.BI_dim_temporadas', 'U') IS NOT NULL DROP TABLE SQL0.BI_dim_temporadas;
-IF OBJECT_ID('SQL0.BI_dim_tipo_servicio', 'U') IS NOT NULL DROP TABLE SQL0.BI_dim_tipo_servicio;
-IF OBJECT_ID('SQL0.BI_dim_canal_venta', 'U') IS NOT NULL DROP TABLE SQL0.BI_dim_canal_venta;
-IF OBJECT_ID('SQL0.BI_dim_estado_propuesta', 'U') IS NOT NULL DROP TABLE SQL0.BI_dim_estado_propuesta;
-IF OBJECT_ID('SQL0.BI_dim_aspecto', 'U') IS NOT NULL DROP TABLE SQL0.BI_dim_aspecto;
-IF OBJECT_ID('SQL0.BI_dim_valoracion', 'U') IS NOT NULL DROP TABLE SQL0.BI_dim_valoracion;
-IF OBJECT_ID('SQL0.BI_dim_cliente', 'U') IS NOT NULL DROP TABLE SQL0.BI_dim_cliente;
-IF OBJECT_ID('SQL0.BI_dim_agente', 'U') IS NOT NULL DROP TABLE SQL0.BI_dim_agente;
-IF OBJECT_ID('SQL0.BI_dim_tiempo', 'U') IS NOT NULL DROP TABLE SQL0.BI_dim_tiempo;
-IF OBJECT_ID('SQL0.BI_hechos_ventas', 'U') IS NOT NULL DROP TABLE SQL0.BI_hechos_ventas;
-IF OBJECT_ID('SQL0.BI_hechos_propuestas', 'U') IS NOT NULL DROP TABLE SQL0.BI_hechos_propuestas;
-IF OBJECT_ID('SQL0.BI_hechos_cotizaciones', 'U') IS NOT NULL DROP TABLE SQL0.BI_hechos_cotizaciones;
-IF OBJECT_ID('SQL0.BI_hechos_encuestas', 'U') IS NOT NULL DROP TABLE SQL0.BI_hechos_encuestas;
 IF OBJECT_ID('SQL0.BI_vw_promedio_ticket','V') IS NOT NULL DROP VIEW SQL0.BI_vw_promedio_ticket;
 IF OBJECT_ID('SQL0.BI_vw_distribucion_facturacion','V') IS NOT NULL DROP VIEW SQL0.BI_vw_distribucion_facturacion;
 IF OBJECT_ID('SQL0.BI_vw_rankings_solicitudes','V') IS NOT NULL DROP VIEW SQL0.BI_vw_rankings_solicitudes;
@@ -25,6 +11,20 @@ IF OBJECT_ID('SQL0.BI_vw_promedio_tiempo_respuestas','V') IS NOT NULL DROP VIEW 
 IF OBJECT_ID('SQL0.BI_vw_desvio_cotizacion','V') IS NOT NULL DROP VIEW SQL0.BI_vw_desvio_cotizacion;
 IF OBJECT_ID('SQL0.BI_vw_rankings_aspectos','V') IS NOT NULL DROP VIEW SQL0.BI_vw_rankings_aspectos;
 IF OBJECT_ID('SQL0.BI_vw_promedio_satisfaccion_agentes','V') IS NOT NULL DROP VIEW SQL0.BI_vw_promedio_satisfaccion_agentes;
+IF OBJECT_ID('SQL0.BI_hechos_ventas', 'U') IS NOT NULL DROP TABLE SQL0.BI_hechos_ventas;
+IF OBJECT_ID('SQL0.BI_hechos_propuestas', 'U') IS NOT NULL DROP TABLE SQL0.BI_hechos_propuestas;
+IF OBJECT_ID('SQL0.BI_hechos_cotizaciones', 'U') IS NOT NULL DROP TABLE SQL0.BI_hechos_cotizaciones;
+IF OBJECT_ID('SQL0.BI_hechos_encuestas', 'U') IS NOT NULL DROP TABLE SQL0.BI_hechos_encuestas;
+IF OBJECT_ID('SQL0.BI_dim_valoracion', 'U') IS NOT NULL DROP TABLE SQL0.BI_dim_valoracion;
+IF OBJECT_ID('SQL0.BI_dim_cliente', 'U') IS NOT NULL DROP TABLE SQL0.BI_dim_cliente;
+IF OBJECT_ID('SQL0.BI_dim_agente', 'U') IS NOT NULL DROP TABLE SQL0.BI_dim_agente;
+IF OBJECT_ID('SQL0.BI_dim_tiempo', 'U') IS NOT NULL DROP TABLE SQL0.BI_dim_tiempo;
+IF OBJECT_ID('SQL0.BI_dim_aspecto', 'U') IS NOT NULL DROP TABLE SQL0.BI_dim_aspecto;
+IF OBJECT_ID('SQL0.BI_dim_estado_propuesta', 'U') IS NOT NULL DROP TABLE SQL0.BI_dim_estado_propuesta;
+IF OBJECT_ID('SQL0.BI_dim_canal_venta', 'U') IS NOT NULL DROP TABLE SQL0.BI_dim_canal_venta;
+IF OBJECT_ID('SQL0.BI_dim_tipo_servicio', 'U') IS NOT NULL DROP TABLE SQL0.BI_dim_tipo_servicio;
+IF OBJECT_ID('SQL0.BI_dim_temporada', 'U') IS NOT NULL DROP TABLE SQL0.BI_dim_temporada;
+IF OBJECT_ID('SQL0.BI_dim_rangos_etario', 'U') IS NOT NULL DROP TABLE SQL0.BI_dim_rangos_etario;
 IF OBJECT_ID('SQL0.BI_migrar_dim_rangos_etario','P') IS NOT NULL DROP PROCEDURE SQL0.BI_migrar_dim_rangos_etario;
 IF OBJECT_ID('SQL0.BI_migrar_dim_temporadas','P') IS NOT NULL DROP PROCEDURE SQL0.BI_migrar_dim_temporadas;
 IF OBJECT_ID('SQL0.BI_migrar_dim_tipo_servicio','P') IS NOT NULL DROP PROCEDURE SQL0.BI_migrar_dim_tipo_servicio;
@@ -39,6 +39,7 @@ IF OBJECT_ID('SQL0.BI_migrar_hechos_ventas','P') IS NOT NULL DROP PROCEDURE SQL0
 IF OBJECT_ID('SQL0.BI_migrar_hechos_propuestas','P') IS NOT NULL DROP PROCEDURE SQL0.BI_migrar_hechos_propuestas;
 IF OBJECT_ID('SQL0.BI_migrar_hechos_cotizaciones','P') IS NOT NULL DROP PROCEDURE SQL0.BI_migrar_hechos_cotizaciones;
 IF OBJECT_ID('SQL0.BI_migrar_hechos_encuestas','P') IS NOT NULL DROP PROCEDURE SQL0.BI_migrar_hechos_encuestas;
+IF OBJECT_ID('SQL0.BI_migraciones_estaticas','P') IS NOT NULL DROP PROCEDURE SQL0.BI_migraciones_estaticas;
 
 /*
 =================================
@@ -48,7 +49,7 @@ IF OBJECT_ID('SQL0.BI_migrar_hechos_encuestas','P') IS NOT NULL DROP PROCEDURE S
 
 CREATE TABLE SQL0.BI_dim_rangos_etario(
     id_rango_etario     BIGINT IDENTITY(1,1) PRIMARY KEY,
-    descripcion         CHAR (25),
+    descripcion         CHAR (35),
     edad_desde          INT,
     edad_hasta          INT
 );
@@ -205,149 +206,7 @@ CREATE TABLE SQL0.BI_hechos_encuestas(
 );
 GO
 
-/*
-==================================
-============= VISTAS =============
-==================================
-*/
 
-/* == 1 == */
-CREATE VIEW SQL0.BI_vw_promedio_ticket AS
-SELECT dt.nombre_mes                                        AS mes,
-       dre.descripcion                                      AS rango_etario_cliente,
-       dcv.nombre                                           AS canal_venta,
-       CAST(SUM(importe_total)/COUNT(*) AS DECIMAL(18,2))   AS promedio_ticket
-FROM SQL0.BI_hechos_ventas hv
-    JOIN SQL0.BI_dim_tiempo dt               ON hv.id_tiempo_venta = dt.id_tiempo
-    JOIN SQL0.BI_dim_cliente dc              ON hv.id_cliente = dc.id_cliente
-    JOIN SQL0.BI_dim_rangos_etario dre       ON dc.rango_edad = dre.id_rango_etario
-    JOIN SQL0.BI_dim_canal_venta dcv         ON hv.id_canal_venta = dcv.id_canal_venta
-GROUP BY dt.nombre_mes, dre.descripcion, dcv.nombre;
-GO
-
-/* == 2 == */
-CREATE VIEW SQL0.BI_vw_distribucion_facturacion AS
-SELECT dt.anio                                                  AS año,
-       dt.cuatrimestre                                          AS cuatrimestre,
-       dts.nombre                                               AS tipo_servicio,
-       CAST(COUNT(*)/SUM(importe_total) AS DECIMAL(18,2))       AS porcentaje_facturacion
-FROM SQL0.BI_hechos_ventas hv
-    JOIN SQL0.BI_dim_tiempo dt               ON hv.id_tiempo_venta = dt.id_tiempo
-    JOIN SQL0.BI_dim_cliente dc              ON hv.id_cliente = dc.id_cliente
-    JOIN SQL0.BI_dim_tipo_servicio dts       ON hv.id_tipo_servicio = dts.id_tipo_servicio
-GROUP BY dts.nombre, dt.anio, dt.cuatrimestre
-ORDER BY porcentaje_facturacion DESC;
-GO
-
-/* == 3 == */
-CREATE VIEW SQL0.BI_vw_rankings_solicitudes AS
-SELECT COUNT(*)                         AS cantidad_solicitudes,
-       dtemporada.nombre                AS temporada,
-       dts.anio                         AS año,
-       dre.descripcion                  AS rango_etario_cliente
-FROM SQL0.BI_hechos_cotizaciones hc
-    JOIN SQL0.BI_dim_tiempo dts              ON hc.id_tiempo_cotizacion = dts.id_tiempo
-    JOIN SQL0.BI_dim_cliente dc              ON hc.id_cliente = dc.id_cliente
-    JOIN SQL0.BI_dim_rangos_etario dre       ON dc.rango_edad = dre.id_rango_etario
-    JOIN SQL0.BI_dim_temporada dtemporada    ON hc.id_temporada = dtemporada.id_temporada
-GROUP BY dtemporada.nombre, dts.anio, dre.descripcion
-ORDER BY cantidad_solicitudes DESC;
-GO
-
-/* == 4 == */
-CREATE VIEW SQL0.BI_vw_promedio_anticipacion_solicitudes AS
-SELECT dts.cuatrimestre                          AS cuatrimestre,
-       dre.descripcion                           AS rango_etario_cliente,
-       AVG(DATEDIFF(DAY, dts.fecha, dtit.fecha)) AS promedio_dias
-FROM SQL0.BI_hechos_cotizaciones hc
-    JOIN SQL0.BI_dim_tiempo dts              ON hc.id_tiempo_cotizacion = dts.id_tiempo
-    JOIN SQL0.BI_dim_tiempo dtit             ON hc.id_tiempo_inicio = dtit.id_tiempo
-    JOIN SQL0.BI_dim_cliente dc              ON hc.id_cliente = dc.id_cliente
-    JOIN SQL0.BI_dim_rangos_etario dre       ON dc.rango_edad = dre.id_rango_etario
-GROUP BY dre.descripcion, dts.cuatrimestre
-ORDER BY promedio_dias DESC;
-GO
-
-/* == 5 == */
-CREATE VIEW SQL0.BI_vw_tasa_aceptacion_propuestas AS
-SELECT
-    dt.cuatrimestre                 AS cuatrimestre,
-    CAST(100 * SUM(CASE WHEN dep.estado = 'Aceptado' THEN 1 ELSE 0 END) 
-            / NULLIF( SUM(CASE WHEN dep.estado IN ('Aceptado','Rechazado') 
-            THEN 1 ELSE 0 END), 0) AS DECIMAL(18,2)
-        )                           AS porcentaje
-FROM SQL0.BI_hechos_propuestas hp
-    INNER JOIN SQL0.BI_dim_tiempo dt             ON hp.id_tiempo_propuesta = dt.id_tiempo
-    INNER JOIN SQL0.BI_dim_estado_propuesta dep  ON hp.id_estado_propuesta = dep.id_estado_propuesta
-GROUP BY dt.cuatrimestre
-ORDER BY porcentaje DESC;
-GO
-
-/* == 6 == */
-CREATE VIEW SQL0.BI_vw_promedio_cotizaciones AS
-SELECT dtempo.nombre                                      AS temporada,
-       dti.anio                                           AS año,
-       CAST(SUM(importe_total)/COUNT(*) AS DECIMAL(18,2)) AS importe_promedio
-FROM SQL0.BI_hechos_cotizaciones hc
-   JOIN SQL0.BI_dim_tiempo dti              ON hc.id_tiempo_inicio = dti.id_tiempo
-   JOIN SQL0.BI_dim_tiempo dts              ON hc.id_tiempo_cotizacion = dts.id_tiempo
-   JOIN SQL0.BI_dim_cliente dc              ON hc.id_cliente = dc.id_cliente
-   JOIN SQL0.BI_dim_rangos_etario dre       ON dc.rango_edad = dre.id_rango_etario
-   JOIN SQL0.BI_dim_temporada dtempo        ON hc.id_temporada = dtempo.id_temporada
-GROUP BY dtempo.nombre, dti.anio, dtempo.nombre
-ORDER BY importe_promedio DESC;
-GO
-
-/* == 7 == */
-CREATE VIEW SQL0.BI_vw_promedio_tiempo_respuestas AS
-SELECT dre.descripcion                         AS rango_etario_agente,
-       dtp.mes                                 AS mes,
-       DATEDIFF(DAY, dtc.fecha ,dtp.fecha)     AS promedio_en_dias
-FROM SQL0.BI_hechos_propuestas hp
-   JOIN SQL0.BI_dim_tiempo dtp              ON hp.id_tiempo_propuesta = dtp.id_tiempo
-   JOIN SQL0.BI_dim_tiempo dtc              ON hp.id_tiempo_cotizacion = dtp.id_tiempo
-   JOIN SQL0.BI_dim_agente da               ON hp.id_agente = da.id_agente
-   JOIN SQL0.BI_dim_rangos_etario dre       ON da.rango_edad = dre.id_rango_etario
-GROUP BY dre.descripcion, dtp.mes
-ORDER BY promedio_en_dias DESC;
-GO
-
-/* == 8 == */
-CREATE VIEW SQL0.BI_vw_desvio_cotizacion AS
-SELECT
-       (hp.importe_total - hp.presupuesto_estimado)
-       / NULLIF(hp.presupuesto_estimado,0)          AS desvio
-FROM SQL0.BI_hechos_propuestas hp
-   JOIN SQL0.BI_dim_tiempo dtp              ON hp.id_tiempo_propuesta = dtp.id_tiempo
-   JOIN SQL0.BI_dim_tiempo dtc              ON hp.id_tiempo_cotizacion = dtc.id_tiempo
-   JOIN SQL0.BI_dim_agente da               ON hp.id_cliente = da.id_agente
-   JOIN SQL0.BI_dim_rangos_etario dre       ON da.rango_edad = dre.id_rango_etario
-GROUP BY dre.descripcion, dtp.mes
-ORDER BY desvio DESC;
-GO
-
-/* == 9 == */
-CREATE VIEW SQL0.BI_vw_rankings_aspectos AS
-SELECT dt.cuatrimestre                                  AS cuatrimestre,
-       da.descripcion                                   AS aspecto,
-       CAST(SUM(puntaje)/COUNT(*) AS DECIMAL(18,2))     AS promedio_puntaje
-FROM SQL0.BI_hechos_encuestas he
-    JOIN SQL0.BI_dim_aspecto da                              ON he.id_aspecto = da.id_aspecto
-    JOIN SQL0.BI_dim_tiempo dt                               ON he.id_tiempo = dt.id_tiempo
-GROUP BY da.descripcion, dt.cuatrimestre;
-GO
-
-/* == 10 == */
-CREATE VIEW SQL0.BI_vw_promedio_satisfaccion_agentes AS
-SELECT dt.mes                                          AS mes,
-       dre.descripcion                                 AS rango_etario_agente,
-       CAST(SUM(puntaje)/COUNT(*) AS DECIMAL(18,2))    AS promedio_puntaje
-FROM SQL0.BI_hechos_encuestas he
-    JOIN SQL0.BI_dim_agente da                              ON he.id_agente = da.id_agente
-    JOIN SQL0.BI_dim_rangos_etario dre                      ON dre.id_rango_etario = da.rango_edad
-    JOIN SQL0.BI_dim_tiempo dt                              ON he.id_tiempo = dt.id_tiempo
-GROUP BY dre.descripcion, dt.cuatrimestre;
-GO
 
 /*
 ============================================
@@ -382,7 +241,6 @@ END;
 GO
 
 
-
 CREATE PROCEDURE SQL0.BI_migrar_dim_canal_venta AS 
 BEGIN 
     INSERT INTO SQL0.BI_dim_canal_venta (nombre)
@@ -394,7 +252,6 @@ CREATE PROCEDURE SQL0.BI_migrar_dim_aspecto AS
 BEGIN  
     INSERT INTO SQL0.BI_dim_aspecto (descripcion)
     SELECT DISTINCT a.descripcion FROM SQL0.aspectos a;
-    SELECT * FROM SQL0.BI_dim_aspecto;
 END;
 GO
 
@@ -569,3 +426,176 @@ EXEC SQL0.BI_migrar_hechos_ventas;
 EXEC SQL0.BI_migrar_hechos_propuestas;
 EXEC SQL0.BI_migrar_hechos_cotizaciones;
 EXEC SQL0.BI_migrar_hechos_encuestas;
+GO
+
+
+/*
+==================================
+============= VISTAS =============
+==================================
+*/
+
+/* == 1 == */
+CREATE VIEW SQL0.BI_vw_promedio_ticket AS
+SELECT dt.nombre_mes                                        AS mes,
+       dre.descripcion                                      AS rango_etario_cliente,
+       dcv.nombre                                           AS canal_venta,
+       CAST(SUM(importe_total)/COUNT(*) AS DECIMAL(18,2))   AS promedio_ticket
+FROM SQL0.BI_hechos_ventas hv
+    JOIN SQL0.BI_dim_tiempo dt               ON hv.id_tiempo_venta = dt.id_tiempo
+    JOIN SQL0.BI_dim_cliente dc              ON hv.id_cliente = dc.id_cliente
+    JOIN SQL0.BI_dim_rangos_etario dre       ON dc.rango_edad = dre.id_rango_etario
+    JOIN SQL0.BI_dim_canal_venta dcv         ON hv.id_canal_venta = dcv.id_canal_venta
+GROUP BY dt.nombre_mes, dre.descripcion, dcv.nombre;
+GO
+
+SELECT * FROM SQL0.BI_vw_promedio_ticket;
+GO
+
+/* == 2 == */ -- todos los porcentajes son 0
+CREATE VIEW SQL0.BI_vw_distribucion_facturacion AS
+SELECT dt.anio                                                  AS año,
+       dt.cuatrimestre                                          AS cuatrimestre,
+       dts.nombre                                               AS tipo_servicio,
+       CAST(COUNT(*)/SUM(importe_total) AS DECIMAL(18,2))       AS porcentaje_facturacion
+FROM SQL0.BI_hechos_ventas hv
+    JOIN SQL0.BI_dim_tiempo dt               ON hv.id_tiempo_venta = dt.id_tiempo
+    JOIN SQL0.BI_dim_cliente dc              ON hv.id_cliente = dc.id_cliente
+    JOIN SQL0.BI_dim_tipo_servicio dts       ON hv.id_tipo_servicio = dts.id_tipo_servicio
+GROUP BY dts.nombre, dt.anio, dt.cuatrimestre;
+GO
+
+SELECT * FROM SQL0.BI_vw_distribucion_facturacion
+ORDER BY porcentaje_facturacion DESC;
+GO
+
+/* == 3 == */
+CREATE VIEW SQL0.BI_vw_rankings_solicitudes AS
+SELECT 
+       dts.anio                         AS año,
+       dtemporada.nombre                AS temporada,
+       dre.descripcion                  AS rango_etario_cliente,
+       COUNT(*)                         AS cantidad_solicitudes
+FROM SQL0.BI_hechos_cotizaciones hc
+    JOIN SQL0.BI_dim_tiempo dts              ON hc.id_tiempo_cotizacion = dts.id_tiempo
+    JOIN SQL0.BI_dim_cliente dc              ON hc.id_cliente = dc.id_cliente
+    JOIN SQL0.BI_dim_rangos_etario dre       ON dc.rango_edad = dre.id_rango_etario
+    JOIN SQL0.BI_dim_temporada dtemporada    ON hc.id_temporada = dtemporada.id_temporada
+GROUP BY dtemporada.nombre, dts.anio, dre.descripcion;
+GO
+
+SELECT * FROM SQL0.BI_vw_rankings_solicitudes
+ORDER BY cantidad_solicitudes DESC;
+GO
+
+/* == 4 == */
+CREATE VIEW SQL0.BI_vw_promedio_anticipacion_solicitudes AS
+SELECT dts.cuatrimestre                          AS cuatrimestre,
+       dre.descripcion                           AS rango_etario_cliente,
+       AVG(DATEDIFF(DAY, dts.fecha, dtit.fecha)) AS promedio_dias
+FROM SQL0.BI_hechos_cotizaciones hc
+    JOIN SQL0.BI_dim_tiempo dts              ON hc.id_tiempo_cotizacion = dts.id_tiempo
+    JOIN SQL0.BI_dim_tiempo dtit             ON hc.id_tiempo_inicio = dtit.id_tiempo
+    JOIN SQL0.BI_dim_cliente dc              ON hc.id_cliente = dc.id_cliente
+    JOIN SQL0.BI_dim_rangos_etario dre       ON dc.rango_edad = dre.id_rango_etario
+GROUP BY dre.descripcion, dts.cuatrimestre;
+GO
+
+SELECT * FROM SQL0.BI_vw_promedio_anticipacion_solicitudes
+ORDER BY promedio_dias DESC;
+GO
+
+/* == 5 == */ -- no anda
+CREATE VIEW SQL0.BI_vw_tasa_aceptacion_propuestas AS
+SELECT
+    dt.cuatrimestre                 AS cuatrimestre,
+    CAST(100 * SUM(CASE WHEN dep.estado = 'Aceptado' THEN 1 ELSE 0 END) 
+            / NULLIF( SUM(CASE WHEN dep.estado IN ('Aceptado','Rechazado') 
+            THEN 1 ELSE 0 END), 0) AS DECIMAL(18,2)
+        )                           AS porcentaje
+FROM SQL0.BI_hechos_propuestas hp
+    INNER JOIN SQL0.BI_dim_tiempo dt             ON hp.id_tiempo_propuesta = dt.id_tiempo
+    INNER JOIN SQL0.BI_dim_estado_propuesta dep  ON hp.id_estado_propuesta = dep.id_estado_propuesta
+GROUP BY dt.cuatrimestre;
+GO
+
+SELECT cuatrimestre, porcentaje FROM SQL0.BI_vw_tasa_aceptacion_propuestas
+ORDER BY porcentaje DESC;
+GO
+
+
+/* == 6 == */
+CREATE VIEW SQL0.BI_vw_promedio_cotizaciones AS
+SELECT dtempo.nombre                                      AS temporada,
+       dti.anio                                           AS año,
+       CAST(SUM(importe_total)/COUNT(*) AS DECIMAL(18,2)) AS importe_promedio
+FROM SQL0.BI_hechos_cotizaciones hc
+   JOIN SQL0.BI_dim_tiempo dti              ON hc.id_tiempo_inicio = dti.id_tiempo
+   JOIN SQL0.BI_dim_tiempo dts              ON hc.id_tiempo_cotizacion = dts.id_tiempo
+   JOIN SQL0.BI_dim_cliente dc              ON hc.id_cliente = dc.id_cliente
+   JOIN SQL0.BI_dim_rangos_etario dre       ON dc.rango_edad = dre.id_rango_etario
+   JOIN SQL0.BI_dim_temporada dtempo        ON hc.id_temporada = dtempo.id_temporada
+GROUP BY dtempo.nombre, dti.anio, dtempo.nombre;
+GO
+
+SELECT temporada, año, importe_promedio FROM SQL0.BI_vw_promedio_cotizaciones
+ORDER BY importe_promedio DESC;
+GO
+
+/* == 7 == */ -- da vacio todo
+CREATE VIEW SQL0.BI_vw_promedio_tiempo_respuestas AS
+SELECT dre.descripcion                         AS rango_etario_agente,
+       dtp.mes                                 AS mes,
+       DATEDIFF(DAY, dtc.fecha ,dtp.fecha)     AS promedio_en_dias
+FROM SQL0.BI_hechos_propuestas hp
+   JOIN SQL0.BI_dim_tiempo dtp              ON hp.id_tiempo_propuesta = dtp.id_tiempo
+   JOIN SQL0.BI_dim_tiempo dtc              ON hp.id_tiempo_cotizacion = dtp.id_tiempo
+   JOIN SQL0.BI_dim_agente da               ON hp.id_agente = da.id_agente
+   JOIN SQL0.BI_dim_rangos_etario dre       ON da.rango_edad = dre.id_rango_etario
+GROUP BY dre.descripcion, dtp.mes, DATEDIFF(DAY, dtc.fecha ,dtp.fecha);
+GO
+
+SELECT rango_etario_agente, mes, promedio_en_dias FROM SQL0.BI_vw_promedio_tiempo_respuestas
+ORDER BY mes DESC, promedio_en_dias DESC; 
+
+GO
+
+/* == 8 == */ -- no da nada
+CREATE VIEW SQL0.BI_vw_desvio_cotizacion AS
+SELECT
+       (hp.importe_total - hp.presupuesto_estimado)/hp.presupuesto_estimado AS desvio
+FROM SQL0.BI_hechos_propuestas hp;
+GO
+
+SELECT * FROM SQL0.BI_vw_desvio_cotizacion;
+GO
+
+/* == 9 == */
+CREATE VIEW SQL0.BI_vw_rankings_aspectos AS
+SELECT dt.cuatrimestre                                  AS cuatrimestre,
+       da.descripcion                                   AS aspecto,
+       CAST(SUM(puntaje)/COUNT(*) AS DECIMAL(18,2))     AS promedio_puntaje
+FROM SQL0.BI_hechos_encuestas he
+    JOIN SQL0.BI_dim_aspecto da                              ON he.id_aspecto = da.id_aspecto
+    JOIN SQL0.BI_dim_tiempo dt                               ON he.id_tiempo = dt.id_tiempo
+GROUP BY da.descripcion, dt.cuatrimestre;
+GO
+
+SELECT cuatrimestre, aspecto, promedio_puntaje FROM SQL0.BI_vw_rankings_aspectos
+ORDER BY cuatrimestre DESC, promedio_puntaje DESC;
+GO
+
+/* == 10 == */
+CREATE VIEW SQL0.BI_vw_promedio_satisfaccion_agentes AS
+SELECT dt.mes                                          AS mes,
+       dre.descripcion                                 AS rango_etario_agente,
+       CAST(SUM(puntaje)/COUNT(*) AS DECIMAL(18,2))    AS promedio_puntaje
+FROM SQL0.BI_hechos_encuestas he
+    JOIN SQL0.BI_dim_agente da                              ON he.id_agente = da.id_agente
+    JOIN SQL0.BI_dim_rangos_etario dre                      ON dre.id_rango_etario = da.rango_edad
+    JOIN SQL0.BI_dim_tiempo dt                              ON he.id_tiempo = dt.id_tiempo
+GROUP BY dre.descripcion, dt.mes;
+GO
+
+SELECT mes, rango_etario_agente, promedio_puntaje FROM SQL0.BI_vw_promedio_satisfaccion_agentes
+ORDER BY mes DESC, promedio_puntaje DESC;
