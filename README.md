@@ -9,7 +9,6 @@
 
 - [Descripción General](#-descripción-general)
 - [Base de Datos](#-base-de-datos)
-- [Modelo Transaccional](#-modelo-transaccional)
 - [Modelo de BI](#-modelo-de-inteligencia-de-negocios)
 - [Vistas Analíticas](#-vistas-analíticas)
 - [Detalles de Implementación](#-detalles-de-implementación)
