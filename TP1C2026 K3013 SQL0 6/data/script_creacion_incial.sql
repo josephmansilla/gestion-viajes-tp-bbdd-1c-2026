@@ -1,4 +1,4 @@
-USE GD1C2026
+﻿USE GD1C2026
 GO
 
 IF OBJECT_ID('SQL0.migrar_paises',                     'P') IS NOT NULL DROP PROCEDURE SQL0.migrar_paises;
@@ -36,34 +36,51 @@ IF OBJECT_ID('SQL0.migrar_excursiones_por_venta',      'P') IS NOT NULL DROP PRO
 IF OBJECT_ID('SQL0.migrar_habitaciones_por_hospedaje', 'P') IS NOT NULL DROP PROCEDURE SQL0.migrar_habitaciones_por_hospedaje;
 GO
 
+-- Many-to-many y hojas absolutas
 IF OBJECT_ID('SQL0.habitaciones_por_hospedaje',        'U') IS NOT NULL DROP TABLE SQL0.habitaciones_por_hospedaje;
+IF OBJECT_ID('SQL0.propuestas_habitacion',             'U') IS NOT NULL DROP TABLE SQL0.propuestas_habitacion; -- ← antes de habitaciones_disponibles
 IF OBJECT_ID('SQL0.excursiones_por_venta',             'U') IS NOT NULL DROP TABLE SQL0.excursiones_por_venta;
-IF OBJECT_ID('SQL0.excursiones_disponibles',           'U') IS NOT NULL DROP TABLE SQL0.excursiones_disponibles;
-IF OBJECT_ID('SQL0.proveedores',                       'U') IS NOT NULL DROP TABLE SQL0.proveedores;
 IF OBJECT_ID('SQL0.vuelos_por_venta',                  'U') IS NOT NULL DROP TABLE SQL0.vuelos_por_venta;
+
+-- Valoraciones y encuestas
+IF OBJECT_ID('SQL0.valoraciones',                      'U') IS NOT NULL DROP TABLE SQL0.valoraciones;
+IF OBJECT_ID('SQL0.encuestas',                         'U') IS NOT NULL DROP TABLE SQL0.encuestas;
+IF OBJECT_ID('SQL0.aspectos',                          'U') IS NOT NULL DROP TABLE SQL0.aspectos;
+
+-- Hospedaje y habitaciones
+IF OBJECT_ID('SQL0.habitaciones_disponibles',          'U') IS NOT NULL DROP TABLE SQL0.habitaciones_disponibles;
+IF OBJECT_ID('SQL0.propuestas_hospedaje',              'U') IS NOT NULL DROP TABLE SQL0.propuestas_hospedaje;
+IF OBJECT_ID('SQL0.hospedajes_por_venta',              'U') IS NOT NULL DROP TABLE SQL0.hospedajes_por_venta;
+IF OBJECT_ID('SQL0.hospedajes_disponibles',            'U') IS NOT NULL DROP TABLE SQL0.hospedajes_disponibles;
+
+-- Vuelos
 IF OBJECT_ID('SQL0.propuestas_vuelo',                  'U') IS NOT NULL DROP TABLE SQL0.propuestas_vuelo;
 IF OBJECT_ID('SQL0.vuelos_disponibles',                'U') IS NOT NULL DROP TABLE SQL0.vuelos_disponibles;
 IF OBJECT_ID('SQL0.aeropuertos',                       'U') IS NOT NULL DROP TABLE SQL0.aeropuertos;
 IF OBJECT_ID('SQL0.aerolineas',                        'U') IS NOT NULL DROP TABLE SQL0.aerolineas;
 IF OBJECT_ID('SQL0.alianzas',                          'U') IS NOT NULL DROP TABLE SQL0.alianzas;
-IF OBJECT_ID('SQL0.propuestas_habitacion',             'U') IS NOT NULL DROP TABLE SQL0.propuestas_habitacion;
-IF OBJECT_ID('SQL0.habitaciones_disponibles',          'U') IS NOT NULL DROP TABLE SQL0.habitaciones_disponibles;
-IF OBJECT_ID('SQL0.propuestas_hospedaje',              'U') IS NOT NULL DROP TABLE SQL0.propuestas_hospedaje;
-IF OBJECT_ID('SQL0.hospedajes_por_venta',              'U') IS NOT NULL DROP TABLE SQL0.hospedajes_por_venta;
-IF OBJECT_ID('SQL0.hospedajes_disponibles',            'U') IS NOT NULL DROP TABLE SQL0.hospedajes_disponibles;
+
+-- Excursiones
+IF OBJECT_ID('SQL0.excursiones_disponibles',           'U') IS NOT NULL DROP TABLE SQL0.excursiones_disponibles;
+IF OBJECT_ID('SQL0.proveedores',                       'U') IS NOT NULL DROP TABLE SQL0.proveedores;
+
+-- Ventas y propuestas
 IF OBJECT_ID('SQL0.ventas',                            'U') IS NOT NULL DROP TABLE SQL0.ventas;
 IF OBJECT_ID('SQL0.propuestas',                        'U') IS NOT NULL DROP TABLE SQL0.propuestas;
 IF OBJECT_ID('SQL0.estado_propuesta',                  'U') IS NOT NULL DROP TABLE SQL0.estado_propuesta;
 IF OBJECT_ID('SQL0.canal_venta',                       'U') IS NOT NULL DROP TABLE SQL0.canal_venta;
 IF OBJECT_ID('SQL0.medio_pago',                        'U') IS NOT NULL DROP TABLE SQL0.medio_pago;
+
+-- Solicitudes
 IF OBJECT_ID('SQL0.detalle_solicitud_ciudades',        'U') IS NOT NULL DROP TABLE SQL0.detalle_solicitud_ciudades;
 IF OBJECT_ID('SQL0.solicitudes_cotizacion',            'U') IS NOT NULL DROP TABLE SQL0.solicitudes_cotizacion;
-IF OBJECT_ID('SQL0.valoraciones',                      'U') IS NOT NULL DROP TABLE SQL0.valoraciones;
-IF OBJECT_ID('SQL0.encuestas',                         'U') IS NOT NULL DROP TABLE SQL0.encuestas;
-IF OBJECT_ID('SQL0.aspectos',                          'U') IS NOT NULL DROP TABLE SQL0.aspectos;
+
+-- Personas
 IF OBJECT_ID('SQL0.clientes',                          'U') IS NOT NULL DROP TABLE SQL0.clientes;
 IF OBJECT_ID('SQL0.agentes',                           'U') IS NOT NULL DROP TABLE SQL0.agentes;
 IF OBJECT_ID('SQL0.agencias',                          'U') IS NOT NULL DROP TABLE SQL0.agencias;
+
+-- Geografía
 IF OBJECT_ID('SQL0.ciudades',                          'U') IS NOT NULL DROP TABLE SQL0.ciudades;
 IF OBJECT_ID('SQL0.localidades',                       'U') IS NOT NULL DROP TABLE SQL0.localidades;
 IF OBJECT_ID('SQL0.provincias',                        'U') IS NOT NULL DROP TABLE SQL0.provincias;
