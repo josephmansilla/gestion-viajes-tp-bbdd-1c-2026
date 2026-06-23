@@ -218,14 +218,11 @@ CREATE PROCEDURE SQL0.BI_migraciones_estaticas AS
 BEGIN
     INSERT INTO SQL0.BI_dim_rangos_etario (descripcion, edad_desde, edad_hasta)
     VALUES
-        -- Rangos de clientes
         ('Menores de 25 años inclusive',    0,  25),
         ('Entre 25 y 35 años inclusive',    26, 35),
         ('Entre 35 y 50 años inclusive',    36, 50),
-        -- Rangos de agentes
-        ('Entre 25 y 35 años',              25, 35),
-        ('Entre 35 y 50 años',              36, 50),
-        -- Compartido
+        ('Entre 25 y 35 años',              26, 34),
+        ('Entre 35 y 50 años',              36, 49),
         ('Mayores de 50 años',              51, 120);
 
     INSERT INTO SQL0.BI_dim_temporada (nombre, mes_inicio, mes_fin) 
@@ -264,10 +261,14 @@ BEGIN
     FROM SQL0.clientes c
         INNER JOIN SQL0.BI_dim_rangos_etario dre
             ON dre.descripcion = CASE
-                WHEN DATEDIFF(YEAR, c.fecha_nacimiento, GETDATE()) <= 25 THEN 'Menores de 25 años inclusive'
-                WHEN DATEDIFF(YEAR, c.fecha_nacimiento, GETDATE()) <= 35 THEN 'Entre 25 y 35 años inclusive'
-                WHEN DATEDIFF(YEAR, c.fecha_nacimiento, GETDATE()) <= 50 THEN 'Entre 35 y 50 años inclusive'
-                ELSE 'Mayores de 50 años'
+                WHEN DATEDIFF(YEAR, c.fecha_nacimiento, GETDATE()) > 0 AND DATEDIFF(YEAR, c.fecha_nacimiento, GETDATE()) <= 25 
+                    THEN 'Menores de 25 años inclusive'
+                WHEN DATEDIFF(YEAR, c.fecha_nacimiento, GETDATE()) > 25 AND DATEDIFF(YEAR, c.fecha_nacimiento, GETDATE()) <= 35 
+                    THEN 'Entre 25 y 35 años inclusive'
+                WHEN DATEDIFF(YEAR, c.fecha_nacimiento, GETDATE()) > 35 AND DATEDIFF(YEAR, c.fecha_nacimiento, GETDATE()) <= 50 
+                    THEN 'Entre 35 y 50 años inclusive'
+                WHEN DATEDIFF(YEAR, c.fecha_nacimiento, GETDATE()) > 50 AND DATEDIFF(YEAR, c.fecha_nacimiento, GETDATE()) <= 120
+                    THEN 'Mayores de 50 años'
             END;
 END;
 GO
@@ -280,10 +281,12 @@ BEGIN
     FROM SQL0.agentes a
         INNER JOIN SQL0.BI_dim_rangos_etario dre
             ON dre.descripcion = CASE
-                WHEN DATEDIFF(YEAR, a.fecha_nacimiento, GETDATE()) <= 35 THEN 'Entre 25 y 35 años'
-                WHEN DATEDIFF(YEAR, a.fecha_nacimiento, GETDATE()) <= 50 THEN 'Entre 35 y 50 años'
-                WHEN DATEDIFF(YEAR, a.fecha_nacimiento, GETDATE()) >= 51 THEN 'Mayores de 50 años'
-                ELSE 'soy un error' -- revisar...
+                WHEN DATEDIFF(YEAR, a.fecha_nacimiento, GETDATE()) > 25 AND DATEDIFF(YEAR, a.fecha_nacimiento, GETDATE()) < 35
+                    THEN 'Entre 25 y 35 años'
+                WHEN DATEDIFF(YEAR, a.fecha_nacimiento, GETDATE()) > 35 AND DATEDIFF(YEAR, a.fecha_nacimiento, GETDATE()) < 50
+                    THEN 'Entre 35 y 50 años'
+                WHEN DATEDIFF(YEAR, a.fecha_nacimiento, GETDATE()) > 50 AND DATEDIFF(YEAR, a.fecha_nacimiento, GETDATE()) <= 120
+                    THEN 'Mayores de 50 años'
             END;
 END;
 GO
@@ -410,12 +413,6 @@ BEGIN
 END;
 GO
 
-/*
-============================================
-=========== EXEC PROCEDURES ================
-============================================
-*/
-
 EXEC SQL0.BI_migraciones_estaticas;
 EXEC SQL0.BI_migrar_dim_canal_venta;
 EXEC SQL0.BI_migrar_dim_aspecto;
@@ -449,8 +446,8 @@ FROM SQL0.BI_hechos_ventas hv
 GROUP BY dt.nombre_mes, dre.descripcion, dcv.nombre;
 GO
 
-SELECT * FROM SQL0.BI_vw_promedio_ticket;
-GO
+--SELECT * FROM SQL0.BI_vw_promedio_ticket;
+--GO
 
 /* == 2 == */
 CREATE VIEW SQL0.BI_vw_distribucion_facturacion AS
@@ -475,9 +472,9 @@ FROM SQL0.BI_hechos_ventas hv
 GROUP BY dts.nombre, dt.anio, dt.cuatrimestre, totales.total_cuatrimestre;
 GO
 
-SELECT * FROM SQL0.BI_vw_distribucion_facturacion
-ORDER BY porcentaje_facturacion DESC;
-GO
+--SELECT * FROM SQL0.BI_vw_distribucion_facturacion
+--ORDER BY porcentaje_facturacion DESC;
+--GO
 
 /* == 3 == */
 CREATE VIEW SQL0.BI_vw_rankings_solicitudes AS
@@ -494,9 +491,9 @@ FROM SQL0.BI_hechos_cotizaciones hc
 GROUP BY dtemporada.nombre, dts.anio, dre.descripcion;
 GO
 
-SELECT * FROM SQL0.BI_vw_rankings_solicitudes
-ORDER BY cantidad_solicitudes DESC;
-GO
+--SELECT * FROM SQL0.BI_vw_rankings_solicitudes
+--ORDER BY cantidad_solicitudes DESC;
+--GO
 
 /* == 4 == */
 CREATE VIEW SQL0.BI_vw_promedio_anticipacion_solicitudes AS
@@ -511,9 +508,9 @@ FROM SQL0.BI_hechos_cotizaciones hc
 GROUP BY dre.descripcion, dts.cuatrimestre;
 GO
 
-SELECT * FROM SQL0.BI_vw_promedio_anticipacion_solicitudes
-ORDER BY promedio_dias DESC;
-GO
+--SELECT * FROM SQL0.BI_vw_promedio_anticipacion_solicitudes
+--ORDER BY promedio_dias DESC;
+--GO
 
 /* == 5 == */
 CREATE VIEW SQL0.BI_vw_tasa_aceptacion_propuestas AS
@@ -529,9 +526,9 @@ FROM SQL0.BI_hechos_propuestas hp
 GROUP BY dt.cuatrimestre;
 GO
 
-SELECT cuatrimestre, porcentaje FROM SQL0.BI_vw_tasa_aceptacion_propuestas
-ORDER BY porcentaje DESC;
-GO
+--SELECT cuatrimestre, porcentaje FROM SQL0.BI_vw_tasa_aceptacion_propuestas
+--ORDER BY porcentaje DESC;
+--GO
 
 /* == 6 == */
 CREATE VIEW SQL0.BI_vw_promedio_cotizaciones AS
@@ -547,9 +544,9 @@ FROM SQL0.BI_hechos_cotizaciones hc
 GROUP BY dtempo.nombre, dti.anio, dtempo.nombre;
 GO
 
-SELECT temporada, año, importe_promedio FROM SQL0.BI_vw_promedio_cotizaciones
-ORDER BY importe_promedio DESC;
-GO
+--SELECT temporada, año, importe_promedio FROM SQL0.BI_vw_promedio_cotizaciones
+--ORDER BY importe_promedio DESC;
+--GO
 
 /* == 7 == */
 CREATE VIEW SQL0.BI_vw_promedio_tiempo_respuestas AS
@@ -565,19 +562,22 @@ FROM SQL0.BI_hechos_propuestas hp
 GROUP BY dre.descripcion, dtp.mes;
 GO
 
-SELECT rango_etario_agente, mes, promedio_en_dias FROM SQL0.BI_vw_promedio_tiempo_respuestas
-ORDER BY mes DESC, promedio_en_dias DESC; 
-GO
+--SELECT rango_etario_agente, mes, promedio_en_dias FROM SQL0.BI_vw_promedio_tiempo_respuestas
+--ORDER BY mes DESC, promedio_en_dias DESC; 
+--GO
 
 /* == 8 == */
 CREATE VIEW SQL0.BI_vw_desvio_cotizacion AS
 SELECT
+        hp.importe_total AS importe_total,
+        hp.presupuesto_estimado AS presupuesto_estimado,
        (hp.importe_total - hp.presupuesto_estimado)/hp.presupuesto_estimado AS desvio
 FROM SQL0.BI_hechos_propuestas hp;
 GO
 
-SELECT * FROM SQL0.BI_vw_desvio_cotizacion;
-GO
+--SELECT * FROM SQL0.BI_vw_desvio_cotizacion;
+--SELECT SUM(desvio) / COUNT(desvio) AS desvio_promedio FROM SQL0.BI_vw_desvio_cotizacion;
+--GO
 
 /* == 9 == */
 CREATE VIEW SQL0.BI_vw_rankings_aspectos AS
@@ -590,9 +590,9 @@ FROM SQL0.BI_hechos_encuestas he
 GROUP BY da.descripcion, dt.cuatrimestre;
 GO
 
-SELECT cuatrimestre, aspecto, promedio_puntaje FROM SQL0.BI_vw_rankings_aspectos
-ORDER BY cuatrimestre DESC, promedio_puntaje DESC;
-GO
+--SELECT cuatrimestre, aspecto, promedio_puntaje FROM SQL0.BI_vw_rankings_aspectos
+--ORDER BY cuatrimestre DESC, promedio_puntaje DESC;
+--GO
 
 /* == 10 == */
 CREATE VIEW SQL0.BI_vw_promedio_satisfaccion_agentes AS
@@ -606,5 +606,5 @@ FROM SQL0.BI_hechos_encuestas he
 GROUP BY dre.descripcion, dt.mes;
 GO
 
-SELECT mes, rango_etario_agente, promedio_puntaje FROM SQL0.BI_vw_promedio_satisfaccion_agentes
-ORDER BY mes DESC, promedio_puntaje DESC;
+--SELECT mes, rango_etario_agente, promedio_puntaje FROM SQL0.BI_vw_promedio_satisfaccion_agentes
+--ORDER BY mes DESC, promedio_puntaje DESC;
