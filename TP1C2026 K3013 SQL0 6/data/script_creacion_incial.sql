@@ -114,6 +114,9 @@ CREATE TABLE SQL0.localidades (
 );
 GO
 
+CREATE INDEX IX_localidades_nombre ON SQL0.localidades (nombre);
+GO
+
 CREATE TABLE SQL0.ciudades (
     codigo_ciudad       BIGINT          NOT NULL,
     codigo_pais         BIGINT          NOT NULL,
@@ -176,6 +179,9 @@ CREATE TABLE SQL0.clientes (
 );
 GO
 
+CREATE INDEX IX_clientes_dni ON SQL0.clientes (dni);
+GO
+
 /* -- SOLICITUD DE COTIZACION -- */
 
 CREATE TABLE SQL0.solicitudes_cotizacion (
@@ -195,6 +201,11 @@ CREATE TABLE SQL0.solicitudes_cotizacion (
     CONSTRAINT FK_sc_agentes   FOREIGN KEY (codigo_agente)
         REFERENCES SQL0.agentes (legajo_agente),
 );
+GO
+
+CREATE INDEX IX_sc_cliente ON SQL0.solicitudes_cotizacion (codigo_cliente);
+GO
+CREATE INDEX IX_sc_agente  ON SQL0.solicitudes_cotizacion (codigo_agente);
 GO
 
 CREATE TABLE SQL0.detalle_solicitud_ciudades (
@@ -257,6 +268,11 @@ CREATE TABLE SQL0.propuestas (
 );
 GO
 
+CREATE INDEX IX_propuestas_cliente ON SQL0.propuestas (codigo_cliente);
+GO
+CREATE INDEX IX_propuestas_agente  ON SQL0.propuestas (codigo_agente);
+GO
+
 /* -- VENTAS -- */
 
 CREATE TABLE SQL0.ventas (
@@ -286,6 +302,11 @@ CREATE TABLE SQL0.ventas (
     CONSTRAINT FK_ventas_medio_pago FOREIGN KEY (medio_pago)
         REFERENCES SQL0.medio_pago (nombre)
 );
+GO
+
+CREATE INDEX IX_ventas_cliente ON SQL0.ventas (codigo_cliente);
+GO
+CREATE INDEX IX_ventas_fecha   ON SQL0.ventas (fecha_venta);
 GO
 
 /* --- ENCUESTAS Y VALORACIONES --- */
@@ -334,6 +355,9 @@ CREATE TABLE SQL0.valoraciones (
 );
 GO
 
+CREATE INDEX IX_valoraciones_encuesta ON SQL0.valoraciones (codigo_encuesta);
+GO
+
 /* -- HOSPEDAJES Y HABITACIONES --  */
 
 CREATE TABLE SQL0.hospedajes_disponibles (
@@ -349,6 +373,9 @@ CREATE TABLE SQL0.hospedajes_disponibles (
     CONSTRAINT FK_hospedajes_disp_ciudades FOREIGN KEY (codigo_ciudad)
         REFERENCES SQL0.ciudades (codigo_ciudad)
 );
+GO
+
+CREATE INDEX IX_hospedajes_disp_nombre ON SQL0.hospedajes_disponibles (nombre);
 GO
 
 CREATE TABLE SQL0.hospedajes_por_venta (
@@ -478,6 +505,10 @@ CREATE TABLE SQL0.vuelos_disponibles (
     CONSTRAINT FK_aeropuerto_llegada FOREIGN KEY (codigo_aeropuerto_llegada)
         REFERENCES SQL0.aeropuertos (codigo_aeropuerto)
 );
+GO
+
+CREATE INDEX IX_vuelos_disponibles_match 
+ON SQL0.vuelos_disponibles (codigo_aerolinea, fecha_salida, fecha_llegada, codigo_aeropuerto_salida, codigo_aeropuerto_llegada, precio_unitario);
 GO
 
 CREATE TABLE SQL0.propuestas_vuelo (

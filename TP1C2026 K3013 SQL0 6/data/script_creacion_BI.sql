@@ -106,6 +106,11 @@ CREATE TABLE SQL0.BI_dim_tiempo(
 );
 GO
 
+CREATE INDEX IX_BI_dt_fecha         ON SQL0.BI_dim_tiempo (fecha);
+CREATE INDEX IX_BI_dt_anio_cuatri   ON SQL0.BI_dim_tiempo (anio, cuatrimestre);
+CREATE INDEX IX_BI_dt_mes           ON SQL0.BI_dim_tiempo (mes);
+GO
+
 CREATE TABLE SQL0.BI_dim_cliente(
     id_cliente      BIGINT PRIMARY KEY,
     nombre          CHAR(255),
@@ -117,6 +122,9 @@ CREATE TABLE SQL0.BI_dim_cliente(
 );
 GO
 
+CREATE INDEX IX_BI_dc_rango ON SQL0.BI_dim_cliente (rango_edad);
+GO
+
 CREATE TABLE SQL0.BI_dim_agente(
     id_agente       BIGINT PRIMARY KEY,
     nombre          CHAR(255),
@@ -126,6 +134,9 @@ CREATE TABLE SQL0.BI_dim_agente(
     CONSTRAINT FK_agente_rango FOREIGN KEY (rango_edad) 
         REFERENCES SQL0.BI_dim_rangos_etario (id_rango_etario)
 );
+GO
+
+CREATE INDEX IX_BI_da_rango ON SQL0.BI_dim_agente (rango_edad);
 GO
 
 /*
@@ -151,6 +162,11 @@ CREATE TABLE SQL0.BI_hechos_ventas(
 );
 GO
 
+CREATE INDEX IX_BI_hv_tiempo    ON SQL0.BI_hechos_ventas (id_tiempo_venta);
+CREATE INDEX IX_BI_hv_cliente   ON SQL0.BI_hechos_ventas (id_cliente);
+CREATE INDEX IX_BI_hv_canal     ON SQL0.BI_hechos_ventas (id_canal_venta);
+GO
+
 CREATE TABLE SQL0.BI_hechos_propuestas(
     id_agente               BIGINT,
     id_cliente              BIGINT,
@@ -170,6 +186,12 @@ CREATE TABLE SQL0.BI_hechos_propuestas(
     CONSTRAINT FK_hp_tiempo_cotizacion FOREIGN KEY (id_tiempo_cotizacion)
         REFERENCES SQL0.BI_dim_tiempo (id_tiempo)
 );
+GO
+
+CREATE INDEX IX_BI_hp_tiempo_propuesta  ON SQL0.BI_hechos_propuestas (id_tiempo_propuesta);
+CREATE INDEX IX_BI_hp_tiempo_cotizacion ON SQL0.BI_hechos_propuestas (id_tiempo_cotizacion);
+CREATE INDEX IX_BI_hp_agente            ON SQL0.BI_hechos_propuestas (id_agente);
+CREATE INDEX IX_BI_hp_estado            ON SQL0.BI_hechos_propuestas (id_estado_propuesta);
 GO
 
 CREATE TABLE SQL0.BI_hechos_cotizaciones(
@@ -192,6 +214,12 @@ CREATE TABLE SQL0.BI_hechos_cotizaciones(
 );
 GO
 
+CREATE INDEX IX_BI_hc_tiempo_cot   ON SQL0.BI_hechos_cotizaciones (id_tiempo_cotizacion);
+CREATE INDEX IX_BI_hc_tiempo_ini   ON SQL0.BI_hechos_cotizaciones (id_tiempo_inicio);
+CREATE INDEX IX_BI_hc_cliente      ON SQL0.BI_hechos_cotizaciones (id_cliente);
+CREATE INDEX IX_BI_hc_temporada    ON SQL0.BI_hechos_cotizaciones (id_temporada);
+GO
+
 CREATE TABLE SQL0.BI_hechos_encuestas(
     id_agente       BIGINT,
     id_aspecto      BIGINT,
@@ -206,7 +234,10 @@ CREATE TABLE SQL0.BI_hechos_encuestas(
 );
 GO
 
-
+CREATE INDEX IX_BI_he_aspecto  ON SQL0.BI_hechos_encuestas (id_aspecto);
+CREATE INDEX IX_BI_he_agente   ON SQL0.BI_hechos_encuestas (id_agente);
+CREATE INDEX IX_BI_he_tiempo   ON SQL0.BI_hechos_encuestas (id_tiempo);
+GO
 
 /*
 ============================================
@@ -469,7 +500,7 @@ FROM SQL0.BI_hechos_ventas hv
         JOIN SQL0.BI_dim_tiempo dt2 ON hv2.id_tiempo_venta = dt2.id_tiempo
         GROUP BY dt2.anio, dt2.cuatrimestre
     ) totales ON totales.anio = dt.anio AND totales.cuatrimestre = dt.cuatrimestre
-GROUP BY dts.nombre, dt.anio, dt.cuatrimestre, totales.total_cuatrimestre;
+GROUP BY dts.nombre, dt.anio, dt.cuatrimestre, totales.total_cuatrimestre
 GO
 
 --SELECT * FROM SQL0.BI_vw_distribucion_facturacion
@@ -541,7 +572,7 @@ FROM SQL0.BI_hechos_cotizaciones hc
    JOIN SQL0.BI_dim_cliente dc              ON hc.id_cliente = dc.id_cliente
    JOIN SQL0.BI_dim_rangos_etario dre       ON dc.rango_edad = dre.id_rango_etario
    JOIN SQL0.BI_dim_temporada dtempo        ON hc.id_temporada = dtempo.id_temporada
-GROUP BY dtempo.nombre, dti.anio, dtempo.nombre;
+GROUP BY dtempo.nombre, dti.anio;
 GO
 
 --SELECT temporada, año, importe_promedio FROM SQL0.BI_vw_promedio_cotizaciones
