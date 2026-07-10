@@ -419,10 +419,13 @@ GO
 
 CREATE TABLE SQL0.habitaciones_disponibles (
     numero_habitacion       BIGINT          NOT NULL,
+    codigo_hospedaje        BIGINT          NOT NULL,
     nombre                  NVARCHAR(255)   NOT NULL,
     precio_noche            DECIMAL(18,2)   NOT NULL,
     descripcion             NVARCHAR(MAX)   NOT NULL,
-    CONSTRAINT PK_habitaciones_disponibles PRIMARY KEY (numero_habitacion)
+    CONSTRAINT PK_habitaciones_disponibles PRIMARY KEY (numero_habitacion),
+    CONSTRAINT FK_habitaciones_hospedaje FOREIGN KEY (codigo_hospedaje)
+        REFERENCES SQL0.hospedajes_disponibles (codigo_hospedaje)
 );
 GO
 
@@ -888,10 +891,12 @@ GO
 /* ---- habitaciones_disponibles ---- */
 CREATE PROCEDURE SQL0.migrar_habitaciones_disponibles AS
 BEGIN
-    INSERT INTO SQL0.habitaciones_disponibles (numero_habitacion, nombre, precio_noche, descripcion)
-    SELECT ROW_NUMBER() OVER (ORDER BY nombre, precio_noche, descripcion), nombre, precio_noche, descripcion
+    INSERT INTO SQL0.habitaciones_disponibles (numero_habitacion, codigo_hospedaje, nombre, precio_noche, descripcion)
+    SELECT ROW_NUMBER() OVER (ORDER BY hd.codigo_hospedaje, x.nombre),
+           hd.codigo_hospedaje, x.nombre, x.precio_noche, x.descripcion
     FROM (
         SELECT DISTINCT
+            m.Hospedaje_Nombre          AS hospedaje_nombre,
             m.Habitacion_Nombre         AS nombre,
             m.Habitacion_Precio_Noche   AS precio_noche,
             m.Habitacion_Descripcion    AS descripcion
@@ -899,7 +904,9 @@ BEGIN
         WHERE m.Habitacion_Precio_Noche IS NOT NULL
           AND m.Habitacion_Descripcion  IS NOT NULL
           AND m.Habitacion_Nombre       IS NOT NULL
-    ) x;
+          AND m.Hospedaje_Nombre        IS NOT NULL
+    ) x
+    JOIN SQL0.hospedajes_disponibles hd ON hd.nombre = x.hospedaje_nombre;
 END;
 GO
 
@@ -919,6 +926,7 @@ BEGIN
                  ON hab.nombre = m.Habitacion_Nombre
                  AND hab.descripcion = m.Habitacion_Descripcion
                  AND hab.precio_noche = m.Habitacion_Precio_Noche
+				 AND hab.codigo_hospedaje = hd.codigo_hospedaje
     WHERE m.Venta_Nro_Venta IS NOT NULL
       AND m.Detalle_Venta_Hospedaje_Cantidad IS NOT NULL
       AND m.Detalle_Venta_Hospedaje_Cod_Reserva IS NOT NULL;
@@ -1155,6 +1163,7 @@ BEGIN
                     ON hab.nombre = m.Habitacion_Nombre
                  AND hab.descripcion = m.Habitacion_Descripcion
                  AND hab.precio_noche = m.Habitacion_Precio_Noche
+				 AND hab.codigo_hospedaje = hd.codigo_hospedaje
         WHERE m.Propuesta_Nro_Propuesta IS NOT NULL AND m.Detalle_Propuesta_Hospedaje_Cant IS NOT NULL
     ) x;
 END;
