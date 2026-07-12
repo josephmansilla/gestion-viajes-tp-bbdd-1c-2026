@@ -642,7 +642,7 @@ BEGIN
         UNION
         SELECT Cliente_Localidad, Cliente_Provincia FROM gd_esquema.Maestra
     ) src
-    JOIN SQL0.provincias pr ON pr.nombre = src.provincia
+        JOIN SQL0.provincias pr ON pr.nombre = src.provincia
     WHERE src.localidad IS NOT NULL AND src.provincia IS NOT NULL
     GROUP BY src.localidad;
 END;
@@ -662,7 +662,7 @@ BEGIN
         (
             SELECT TOP 1 pr2.codigo_provincia
             FROM SQL0.provincias pr2
-            JOIN SQL0.paises     p2  ON p2.codigo_pais = pr2.codigo_pais
+                JOIN SQL0.paises     p2  ON p2.codigo_pais = pr2.codigo_pais
             WHERE p2.nombre = src.pais
             ORDER BY pr2.codigo_provincia
         )                                                            AS codigo_provincia,
@@ -697,8 +697,8 @@ BEGIN
         SELECT DISTINCT Hospedaje_Ciudad, Hospedaje_Pais
         FROM gd_esquema.Maestra WHERE Hospedaje_Ciudad IS NOT NULL AND Hospedaje_Pais IS NOT NULL
     ) src
-    JOIN SQL0.paises      p ON p.nombre = src.pais
-    JOIN SQL0.localidades l ON l.nombre = src.ciudad;
+        JOIN SQL0.paises      p ON p.nombre = src.pais
+        JOIN SQL0.localidades l ON l.nombre = src.ciudad;
 END;
 GO
 
@@ -777,7 +777,7 @@ BEGIN
            l.codigo_localidad, cu.Cliente_Nombre, cu.Cliente_Apellido, cu.Cliente_Dni,
            cu.Cliente_Tel, cu.Cliente_Mail, cu.Cliente_Direccion, CAST(cu.Cliente_Fecha_Nac AS DATE)
     FROM clientes_unicos cu
-    JOIN SQL0.localidades l ON l.nombre = cu.Cliente_Localidad
+        JOIN SQL0.localidades l ON l.nombre = cu.Cliente_Localidad
     WHERE rn = 1;
 END;
 GO
@@ -802,7 +802,7 @@ BEGIN
         m.Aerolinea_Nombre   AS nombre,
         m.Aerolinea_Alianza  AS alianza
     FROM gd_esquema.Maestra m
-    JOIN SQL0.paises p ON p.nombre = m.Aerolinea_Pais
+        JOIN SQL0.paises p ON p.nombre = m.Aerolinea_Pais
     WHERE m.Aerolinea_Codigo IS NOT NULL;
 END;
 GO
@@ -830,7 +830,7 @@ BEGIN
         FROM gd_esquema.Maestra
         WHERE Aeropuerto_Llegada_Codigo IS NOT NULL
     ) src
-    JOIN SQL0.ciudades c ON c.nombre = src.ciudad;
+        JOIN SQL0.ciudades c ON c.nombre = src.ciudad;
 END;
 GO
 
@@ -882,8 +882,8 @@ BEGIN
                m.Hospedaje_Incluye_Desayuno AS incluye_desayuno, m.Hospedaje_Check_In AS horario_check_in,
                m.Hospedaje_Check_Out AS horario_check_out
         FROM gd_esquema.Maestra m
-        JOIN SQL0.ciudades c ON c.nombre = m.Hospedaje_Ciudad
-        JOIN SQL0.paises p ON p.nombre = m.Hospedaje_Pais
+            JOIN SQL0.ciudades c ON c.nombre = m.Hospedaje_Ciudad
+            JOIN SQL0.paises p ON p.nombre = m.Hospedaje_Pais
         WHERE m.Hospedaje_Nombre IS NOT NULL
     ) x;
 END;
@@ -906,7 +906,7 @@ BEGIN
           AND m.Habitacion_Nombre       IS NOT NULL
           AND m.Hospedaje_Nombre        IS NOT NULL
     ) x
-    JOIN SQL0.hospedajes_disponibles hd ON hd.nombre = x.hospedaje_nombre;
+        JOIN SQL0.hospedajes_disponibles hd ON hd.nombre = x.hospedaje_nombre;
 END;
 GO
 
@@ -923,10 +923,8 @@ BEGIN
                 ON hd.codigo_hospedaje = hpv.codigo_hospedaje_disponible
                     AND hpv.codigo_reserva = m.Detalle_Venta_Hospedaje_Cod_Reserva
         JOIN SQL0.habitaciones_disponibles hab 
-                 ON hab.nombre = m.Habitacion_Nombre
-                 AND hab.descripcion = m.Habitacion_Descripcion
-                 AND hab.precio_noche = m.Habitacion_Precio_Noche
-				 AND hab.codigo_hospedaje = hd.codigo_hospedaje
+                 ON hab.nombre = m.Habitacion_Nombre AND hab.descripcion = m.Habitacion_Descripcion
+                 AND hab.precio_noche = m.Habitacion_Precio_Noche AND hab.codigo_hospedaje = hd.codigo_hospedaje
     WHERE m.Venta_Nro_Venta IS NOT NULL
       AND m.Detalle_Venta_Hospedaje_Cantidad IS NOT NULL
       AND m.Detalle_Venta_Hospedaje_Cod_Reserva IS NOT NULL;
@@ -942,7 +940,7 @@ BEGIN
         SELECT DISTINCT pr.numero_proveedor, m.Excursion_Nombre AS nombre, m.Excursion_Horario AS horario,
                m.Excursion_Precio AS precio_unitario, m.Excursion_Duracion AS duracion, m.Excursion_Descripcion AS descripcion
         FROM gd_esquema.Maestra m
-        JOIN SQL0.proveedores pr ON pr.nombre = m.Proveedor_Nombre
+            JOIN SQL0.proveedores pr ON pr.nombre = m.Proveedor_Nombre
         WHERE m.Excursion_Nombre IS NOT NULL
     ) x;
 END;
@@ -1003,7 +1001,7 @@ BEGIN
         a.codigo_aspecto,
         m.Detalle_Encuesta_Puntaje  AS puntaje
     FROM gd_esquema.Maestra m
-    JOIN SQL0.aspectos a ON a.descripcion = m.Aspecto_Aspecto
+        JOIN SQL0.aspectos a ON a.descripcion = m.Aspecto_Aspecto
     WHERE m.Encuesta_Codigo_Encuesta IS NOT NULL
       AND m.Aspecto_Aspecto          IS NOT NULL
       AND m.Detalle_Encuesta_Puntaje IS NOT NULL;
@@ -1062,7 +1060,7 @@ BEGIN
         m.Solicitud_Presupuesto_Estimado            AS presupuesto_estimado,
         m.Solicitud_Observaciones                   AS observaciones
     FROM gd_esquema.Maestra m
-    JOIN SQL0.clientes cl ON cl.dni = m.Cliente_Dni
+        JOIN SQL0.clientes cl ON cl.dni = m.Cliente_Dni
     WHERE m.Solicitud_Nro_Solicitud IS NOT NULL;
 END;
 GO
@@ -1079,7 +1077,7 @@ BEGIN
         c.codigo_ciudad,
         m.Detalle_Solicitud_Cant_Dias_Aprox AS cantidad_dias
     FROM gd_esquema.Maestra m
-    JOIN SQL0.ciudades c ON c.nombre = m.Detalle_Solicitud_Ciudad
+        JOIN SQL0.ciudades c ON c.nombre = m.Detalle_Solicitud_Ciudad
     WHERE m.Solicitud_Nro_Solicitud IS NOT NULL
       AND m.Detalle_Solicitud_Ciudad IS NOT NULL;
 END;
@@ -1108,8 +1106,8 @@ BEGIN
         m.Propuesta_Descuento                   AS descuento,
         m.Propuesta_Importe_Total               AS importe_total
     FROM gd_esquema.Maestra m
-    JOIN SQL0.clientes cl ON cl.dni = m.Cliente_Dni
-    JOIN estado_propuesta ep ON ep.estado = m.Propuesta_Estado
+        JOIN SQL0.clientes cl ON cl.dni = m.Cliente_Dni
+        JOIN estado_propuesta ep ON ep.estado = m.Propuesta_Estado
     WHERE m.Propuesta_Nro_Propuesta IS NOT NULL;
 END;
 GO
@@ -1183,8 +1181,8 @@ BEGIN
                DATEDIFF(DAY, m.Detalle_Propuesta_Hospedaje_Fecha_Desde, m.Detalle_Propuesta_Hospedaje_Fecha_Hasta) AS cantidad_dias,
                m.Detalle_Propuesta_Hospedaje_Subtotal AS subtotal
         FROM gd_esquema.Maestra m
-        JOIN SQL0.clientes cl ON cl.dni = m.Cliente_Dni
-        JOIN SQL0.hospedajes_disponibles hd ON hd.nombre = m.Hospedaje_Nombre
+            JOIN SQL0.clientes cl ON cl.dni = m.Cliente_Dni
+            JOIN SQL0.hospedajes_disponibles hd ON hd.nombre = m.Hospedaje_Nombre
         WHERE m.Propuesta_Nro_Propuesta IS NOT NULL AND m.Detalle_Propuesta_Hospedaje_Fecha_Desde IS NOT NULL
     ) x;
 END;
@@ -1211,9 +1209,9 @@ BEGIN
         m.Venta_Descuento            AS descuento,
         m.Venta_Importe_Total        AS importe_total
     FROM gd_esquema.Maestra m
-    JOIN SQL0.clientes cl ON cl.dni = m.Cliente_Dni
-    JOIN SQL0.canal_venta cv ON cv.nombre = m.Venta_Canal_Venta
-    JOIN SQL0.medio_pago mp ON mp.nombre = m.Venta_Medio_Pago
+        JOIN SQL0.clientes cl ON cl.dni = m.Cliente_Dni
+        JOIN SQL0.canal_venta cv ON cv.nombre = m.Venta_Canal_Venta
+        JOIN SQL0.medio_pago mp ON mp.nombre = m.Venta_Medio_Pago
     WHERE m.Venta_Nro_Venta IS NOT NULL;
 END;
 GO
@@ -1234,16 +1232,14 @@ BEGIN
         m.Detalle_Venta_Vuelo_Subtotal          AS subtotal
     FROM gd_esquema.Maestra m
         JOIN SQL0.vuelos_disponibles vd
-                ON vd.codigo_aerolinea            = m.Aerolinea_Codigo
-                AND vd.fecha_salida               = m.Vuelo_Fecha_Salida
-                AND vd.fecha_llegada              = m.Vuelo_Fecha_Llegada
-                AND vd.codigo_aeropuerto_salida   = m.Aeropuerto_Salida_Codigo  
-                AND vd.codigo_aeropuerto_llegada  = m.Aeropuerto_Llegada_Codigo 
-                AND vd.precio_unitario            = m.Vuelo_Precio
-    JOIN SQL0.ventas vnt
-        ON m.Venta_Nro_Venta = vnt.numero_venta
-    WHERE m.Venta_Nro_Venta IS NOT NULL
-      AND m.Detalle_Venta_Vuelo_Cantidad_Pasajes IS NOT NULL;
+                ON vd.codigo_aerolinea = m.Aerolinea_Codigo
+                    AND vd.fecha_salida = m.Vuelo_Fecha_Salida
+                    AND vd.fecha_llegada = m.Vuelo_Fecha_Llegada
+                    AND vd.codigo_aeropuerto_salida = m.Aeropuerto_Salida_Codigo  
+                    AND vd.codigo_aeropuerto_llegada = m.Aeropuerto_Llegada_Codigo 
+                    AND vd.precio_unitario = m.Vuelo_Precio
+        JOIN SQL0.ventas vnt ON m.Venta_Nro_Venta = vnt.numero_venta
+    WHERE m.Venta_Nro_Venta IS NOT NULL AND m.Detalle_Venta_Vuelo_Cantidad_Pasajes IS NOT NULL;
 END;
 GO
 
@@ -1270,8 +1266,7 @@ BEGIN
     FROM gd_esquema.Maestra m
         JOIN SQL0.hospedajes_disponibles hd ON hd.nombre = m.Hospedaje_Nombre
         JOIN SQL0.ventas vnt ON vnt.numero_venta = m.Venta_Nro_Venta
-    WHERE m.Venta_Nro_Venta IS NOT NULL
-      AND m.Detalle_Venta_Hospedaje_Cantidad IS NOT NULL;
+    WHERE m.Venta_Nro_Venta IS NOT NULL AND m.Detalle_Venta_Hospedaje_Cantidad IS NOT NULL;
 END;
 GO
 
@@ -1294,8 +1289,7 @@ BEGIN
     FROM gd_esquema.Maestra m
         JOIN SQL0.excursiones_disponibles ed ON ed.nombre = m.Excursion_Nombre
         JOIN SQL0.ventas vnt ON vnt.numero_venta = m.Venta_Nro_Venta
-    WHERE m.Venta_Nro_Venta IS NOT NULL
-      AND m.Detalle_Venta_Excursion_Cant IS NOT NULL;
+    WHERE m.Venta_Nro_Venta IS NOT NULL AND m.Detalle_Venta_Excursion_Cant IS NOT NULL;
 END;
 GO
 
