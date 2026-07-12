@@ -16,7 +16,6 @@ IF OBJECT_ID('SQL0.BI_hechos_propuestas', 'U') IS NOT NULL DROP TABLE SQL0.BI_he
 IF OBJECT_ID('SQL0.BI_hechos_cotizaciones', 'U') IS NOT NULL DROP TABLE SQL0.BI_hechos_cotizaciones;
 IF OBJECT_ID('SQL0.BI_hechos_encuestas', 'U') IS NOT NULL DROP TABLE SQL0.BI_hechos_encuestas;
 IF OBJECT_ID('SQL0.BI_dim_valoracion', 'U') IS NOT NULL DROP TABLE SQL0.BI_dim_valoracion;
-IF OBJECT_ID('SQL0.BI_dim_cliente', 'U') IS NOT NULL DROP TABLE SQL0.BI_dim_cliente;
 IF OBJECT_ID('SQL0.BI_dim_agente', 'U') IS NOT NULL DROP TABLE SQL0.BI_dim_agente;
 IF OBJECT_ID('SQL0.BI_dim_tiempo', 'U') IS NOT NULL DROP TABLE SQL0.BI_dim_tiempo;
 IF OBJECT_ID('SQL0.BI_dim_aspecto', 'U') IS NOT NULL DROP TABLE SQL0.BI_dim_aspecto;
@@ -315,9 +314,13 @@ BEGIN
         SELECT e.fecha_realizado AS fecha
         FROM SQL0.encuestas e
         UNION
-        SELECT v.fecha FROM SQL0.solicitudes_cotizacion sc
-        CROSS APPLY(VALUES (sc.fecha_realizada), (sc.fecha_inicio_tentativa)) v(fecha)
-    ) fechas;
+        SELECT fecha_realizada   AS fecha FROM SQL0.solicitudes_cotizacion
+        UNION
+        SELECT fecha_inicio_tentativa AS fecha FROM SQL0.solicitudes_cotizacion
+        UNION
+        SELECT fecha_fin_tentativa    AS fecha FROM SQL0.solicitudes_cotizacion
+    ) fechas
+    WHERE fechas.fecha IS NOT NULL;
 END;
 GO
 
@@ -476,7 +479,7 @@ GO
 
 /* == 1 == */
 CREATE VIEW SQL0.BI_vw_promedio_ticket AS
-SELECT dt.nombre_mes AS mes,
+SELECT dt.nombre_mes AS mes, -- dt.anio AS año,
        dre.descripcion AS rango_etario_cliente,
        dcv.nombre AS canal_venta,
        CAST(SUM(hv.importe_total) / SUM(hv.cantidad_ventas) AS DECIMAL(18,2)) AS promedio_ticket
@@ -484,7 +487,7 @@ FROM SQL0.BI_hechos_ventas hv
     JOIN SQL0.BI_dim_tiempo dt ON hv.id_tiempo_venta = dt.id_tiempo
     JOIN SQL0.BI_dim_rangos_etario dre ON hv.id_rango_etario_cliente = dre.id_rango_etario
     JOIN SQL0.BI_dim_canal_venta dcv ON hv.id_canal_venta = dcv.id_canal_venta
-GROUP BY dt.nombre_mes, dre.descripcion, dcv.nombre;
+GROUP BY dt.nombre_mes, dre.descripcion, dcv.nombre;--, dt.anio
 GO
 
 SELECT * FROM SQL0.BI_vw_promedio_ticket;

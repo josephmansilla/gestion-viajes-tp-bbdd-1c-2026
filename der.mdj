@@ -21014,7 +21014,7 @@
 								"$ref": "AAAAAAGeeX/ezk0Xva4="
 							},
 							"name": "id_estado_propuesta",
-							"type": "SMALLINT",
+							"type": "BIGINT",
 							"length": 0,
 							"primaryKey": true
 						},
