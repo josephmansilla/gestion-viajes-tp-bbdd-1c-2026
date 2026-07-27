@@ -1,8 +1,11 @@
-# 🌍✈️ FRBA - Gestión de Viajes | Business Intelligence
+# 🌍✈️ Gestión de Viajes | Business Intelligence
 
 > **Trabajo Práctico de Gestión de Datos** | 1° Cuatrimestre 2026  
 > Grupo: **SQL0** | Universidad Tecnológica Nacional - FRBA
 
+| [Joseph Mansilla](https://github.com/josephmansilla) | [Tobias Calio](https://github.com/caliotobias) | [Martin Morris](https://github.com/martomorri)
+|:--:|:--:|:--:|
+| <img src="https://avatars.githubusercontent.com/u/162230766?s=400&u=6ac208c05e9fedd414fefc12db5c38efe1c6fcd8&v=4" alt="Joseph Mansilla" width="76" height="76"> | <img src="https://avatars.githubusercontent.com/u/179876635?v=4" alt="Tobias Calio" width="76" height="76"> | <img src="https://avatars.githubusercontent.com/u/106319796?v=4" alt="Martin Morris" width="76" height="76"> | 
 ---
 
 ## 📋 Tabla de Contenidos
