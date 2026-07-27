@@ -1,4 +1,5 @@
-# 🌍✈️ Gestión de Viajes | Business Intelligence
+![Microsoft SQL Server](https://img.shields.io/badge/Microsoft%20SQL%20Server-CC292B?style=for-the-badge&logo=microsoft-sql-server&logoColor=white)
+# Gestión de Viajes | Base de Datos y Business Intelligence
 
 > **Trabajo Práctico de Gestión de Datos** | 1° Cuatrimestre 2026  
 > Grupo: **SQL0** | Universidad Tecnológica Nacional - FRBA
